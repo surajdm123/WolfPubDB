@@ -35,25 +35,18 @@ public class EditingPublishingService {
                 System.out.println("10. Get all publications assigned to editor");
                 System.out.println("11. Get Publication information\n");
 
-                System.out.println("12. Return to Main Menu");
+                System.out.println("12. Return to Main Menu\n");
+
+                System.out.println("Enter your choice:");
 
                 int choice = scanner.nextInt();
-
+                scanner.nextLine();
                 switch (choice) {
                     case 1:
-                        System.out.println("Enter Publication Title: ");
-                        final String title = scanner.next();
-                        System.out.println("Enter Publication Date (yyyy-mm-dd): ");
-                        final String publicationDate = scanner.next();
-                        System.out.println("Enter Genre: ");
-                        final String genre = scanner.next();
-                        final String publicationType = MYSQL_CONSTANTS.BOOK;
-                        System.out.println("Enter Number of Pages: ");
-                        final int numberOfPages = scanner.nextInt();
-                        System.out.println("Enter Author Id:");
-                        final int authorId = scanner.nextInt();
-
-                        insertNewBookPublication(connection, title, publicationDate, genre, publicationType, numberOfPages, authorId);
+                        insertNewBookPublication(connection);
+                        break;
+                    case 2:
+                        updateBookPublication(connection);
                         break;
 
                     case 12:
@@ -71,7 +64,99 @@ public class EditingPublishingService {
 
     }
 
-    public boolean insertNewBookPublication(final Connection connection, final String title, final String publicationDate, final String genre, final String publicationType, final int numberOfPages, final int authorId) {
+    public boolean updateBookPublication(Connection connection) {
+        System.out.println("Enter Book Publication ID you want to update: ");
+        final int pid = scanner.nextInt();
+
+        System.out.println("What do you want to update?");
+        System.out.println("1. Title");
+        System.out.println("2. Publication Date");
+        System.out.println("3. Genre");
+        System.out.println("4. Number of Pages\n");
+        System.out.println("Enter your choice: \t");
+        final int choice = scanner.nextInt();
+        scanner.nextLine();
+        int updatedRows = 0;
+
+        try {
+            connection.setAutoCommit(false);
+            switch(choice) {
+                case 1:
+                    System.out.println("Enter the new Title: \t");
+                    final String newTitle = scanner.nextLine();
+                    final String titleUpdateSqlQuery = "UPDATE publication SET title = ? WHERE pid = ?;";
+                    PreparedStatement titleUpdateStatement = connection.prepareStatement(titleUpdateSqlQuery);
+                    titleUpdateStatement.setString(1, newTitle);
+                    titleUpdateStatement.setInt(2, pid);
+                    updatedRows = titleUpdateStatement.executeUpdate();
+                    connection.commit();
+                    System.out.println("Successfully updated " + updatedRows + "row(s).");
+                    break;
+
+                case 2:
+                    System.out.println("Enter the new Publication Date (yyyy-mm-dd): \t");
+                    final String newDate = scanner.nextLine();
+                    final String dateUpdateSqlQuery = "UPDATE publication SET publication_date = ? WHERE pid = ?;";
+                    PreparedStatement dateUpdateStatement = connection.prepareStatement(dateUpdateSqlQuery);
+                    dateUpdateStatement.setString(1, newDate);
+                    dateUpdateStatement.setInt(2, pid);
+                    updatedRows = dateUpdateStatement.executeUpdate();
+                    connection.commit();
+                    System.out.println("Successfully updated " + updatedRows + "row(s).");
+                    break;
+
+                case 3:
+                    System.out.println("Enter the new genre: \t");
+                    final String newGenre = scanner.nextLine();
+                    final String genreUpdateSqlQuery = "UPDATE publication SET genre = ? WHERE pid = ?;";
+                    PreparedStatement genreUpdateStatement = connection.prepareStatement(genreUpdateSqlQuery);
+                    genreUpdateStatement.setString(1, newGenre);
+                    genreUpdateStatement.setInt(2, pid);
+                    updatedRows = genreUpdateStatement.executeUpdate();
+                    connection.commit();
+                    System.out.println("Successfully updated " + updatedRows + "row(s).");
+                    break;
+
+                case 4:
+                    System.out.println("Enter the new number of pages: \t");
+                    final int newNumberOfPages = scanner.nextInt();
+                    final String pagesUpdateSqlQuery = "UPDATE book SET number_of_pages = ? WHERE pid = ?;";
+                    PreparedStatement pagesUpdateStatement = connection.prepareStatement(pagesUpdateSqlQuery);
+                    pagesUpdateStatement.setInt(1, newNumberOfPages);
+                    pagesUpdateStatement.setInt(2, pid);
+                    updatedRows = pagesUpdateStatement.executeUpdate();
+                    connection.commit();
+                    System.out.println("Successfully updated " + updatedRows + "row(s).");
+                    break;
+
+                default:
+                    System.out.println("Invalid Input. Please try again");
+
+            }
+
+            connection.setAutoCommit(false);
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean insertNewBookPublication(final Connection connection) {
+
+        System.out.println("Enter Publication Title: ");
+        final String title = scanner.nextLine();
+        System.out.println("Enter Publication Date (yyyy-mm-dd): ");
+        final String publicationDate = scanner.nextLine();
+        System.out.println("Enter Genre: ");
+        final String genre = scanner.nextLine();
+        final String publicationType = MYSQL_CONSTANTS.BOOK;
+        System.out.println("Enter Number of Pages: ");
+        final int numberOfPages = scanner.nextInt();
+        System.out.println("Enter Author Id:");
+        final int authorId = scanner.nextInt();
 
         try {
             connection.setAutoCommit(false);
@@ -107,14 +192,13 @@ public class EditingPublishingService {
             statement3.executeUpdate();
 
             connection.commit();
+            System.out.println("Book Publication successfully inserted (pid=" + pid + ").\n\n");
             connection.setAutoCommit(true);
 
         } catch (Exception e) {
             System.out.println("Exception Occurred: " + e.getMessage());
             return false;
         }
-
-        System.out.println("Book Publication successfully inserted.");
         return true;
     }
 }

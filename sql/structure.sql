@@ -100,12 +100,12 @@ CREATE TABLE `orders` (
 
 
 CREATE TABLE `payment` (
-  `payId` INT NOT NULL AUTO_INCREMENT,
+  `pId` INT NOT NULL AUTO_INCREMENT,
   `payDate` DATE NOT NULL,
   `work_type` VARCHAR(45) NOT NULL,
   `amount` DOUBLE NOT NULL,
   `sid` INT NOT NULL,
-  PRIMARY KEY (`payId`),
+  PRIMARY KEY (`pId`),
      FOREIGN KEY (`sid`)
      REFERENCES `staff` (`sid`)
      ON DELETE CASCADE
