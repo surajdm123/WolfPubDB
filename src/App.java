@@ -11,7 +11,7 @@ public class App {
 
             System.out.println("-----Welcome to WolfCity Publishing House-----\n\n");
 
-            while(true) {
+            while (true) {
                 System.out.println("Choose an operation you want to perform:");
                 System.out.println("1. Editing and Publishing");
                 System.out.println("2. Production");
@@ -22,7 +22,7 @@ public class App {
                 System.out.println("Enter your choice: \t");
                 int choice = scanner.nextInt();
 
-                switch(choice) {
+                switch (choice) {
                     case 1:
                         EditingPublishingService editingPublishingService = new EditingPublishingService();
                         editingPublishingService.run();

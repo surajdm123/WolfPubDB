@@ -54,7 +54,7 @@ public class EditingPublishingService {
 
                 }
 
-                if(choice == 12) {
+                if (choice == 12) {
                     break;
                 }
             }
@@ -80,7 +80,7 @@ public class EditingPublishingService {
 
         try {
             connection.setAutoCommit(false);
-            switch(choice) {
+            switch (choice) {
                 case 1:
                     System.out.println("Enter the new Title: \t");
                     final String newTitle = scanner.nextLine();
@@ -173,7 +173,7 @@ public class EditingPublishingService {
 
             int pid = -1;
 
-            if(rs.next()) {
+            if (rs.next()) {
                 pid = rs.getInt(1);
             } else {
                 throw new SQLException("Could not insert into table publication");
