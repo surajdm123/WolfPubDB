@@ -16,8 +16,8 @@ public class App {
                 System.out.println("1. Editing and Publishing");
                 System.out.println("2. Production");
                 System.out.println("3. Distribution");
-                System.out.println("4. Reports\n\n");
-                System.out.println("5. Exit");
+                System.out.println("4. Reports");
+                System.out.println("5. Exit\n");
 
                 System.out.println("Enter your choice: \t");
                 int choice = scanner.nextInt();
