@@ -10,13 +10,9 @@ public class EditingPublishingService {
     ConnectionHelper connectionHelper = new ConnectionHelper();
     Scanner scanner = new Scanner(System.in);
 
-    public void run() {
+    public void run(final Connection connection) {
 
-        /*
-         * Try with resources will automatically close the connection once
-         * the control goes over the try-catch block.
-         */
-        try (final Connection connection = connectionHelper.getConnection()) {
+        try {
 
             while (true) {
                 System.out.println("BOOK PUBLICATION:");
@@ -80,62 +76,69 @@ public class EditingPublishingService {
 
         try {
             connection.setAutoCommit(false);
-            switch (choice) {
-                case 1:
-                    System.out.println("Enter the new Title: \t");
-                    final String newTitle = scanner.nextLine();
-                    final String titleUpdateSqlQuery = "UPDATE publication SET title = ? WHERE pid = ?;";
-                    PreparedStatement titleUpdateStatement = connection.prepareStatement(titleUpdateSqlQuery);
-                    titleUpdateStatement.setString(1, newTitle);
-                    titleUpdateStatement.setInt(2, pid);
-                    updatedRows = titleUpdateStatement.executeUpdate();
-                    connection.commit();
-                    System.out.println("Successfully updated " + updatedRows + "row(s).");
-                    break;
+            try {
 
-                case 2:
-                    System.out.println("Enter the new Publication Date (yyyy-mm-dd): \t");
-                    final String newDate = scanner.nextLine();
-                    final String dateUpdateSqlQuery = "UPDATE publication SET publication_date = ? WHERE pid = ?;";
-                    PreparedStatement dateUpdateStatement = connection.prepareStatement(dateUpdateSqlQuery);
-                    dateUpdateStatement.setString(1, newDate);
-                    dateUpdateStatement.setInt(2, pid);
-                    updatedRows = dateUpdateStatement.executeUpdate();
-                    connection.commit();
-                    System.out.println("Successfully updated " + updatedRows + "row(s).");
-                    break;
+                switch (choice) {
+                    case 1:
+                        System.out.println("Enter the new Title: \t");
+                        final String newTitle = scanner.nextLine();
+                        final String titleUpdateSqlQuery = "UPDATE publication SET title = ? WHERE pid = ?;";
+                        PreparedStatement titleUpdateStatement = connection.prepareStatement(titleUpdateSqlQuery);
+                        titleUpdateStatement.setString(1, newTitle);
+                        titleUpdateStatement.setInt(2, pid);
+                        updatedRows = titleUpdateStatement.executeUpdate();
+                        connection.commit();
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
 
-                case 3:
-                    System.out.println("Enter the new genre: \t");
-                    final String newGenre = scanner.nextLine();
-                    final String genreUpdateSqlQuery = "UPDATE publication SET genre = ? WHERE pid = ?;";
-                    PreparedStatement genreUpdateStatement = connection.prepareStatement(genreUpdateSqlQuery);
-                    genreUpdateStatement.setString(1, newGenre);
-                    genreUpdateStatement.setInt(2, pid);
-                    updatedRows = genreUpdateStatement.executeUpdate();
-                    connection.commit();
-                    System.out.println("Successfully updated " + updatedRows + "row(s).");
-                    break;
+                    case 2:
+                        System.out.println("Enter the new Publication Date (yyyy-mm-dd): \t");
+                        final String newDate = scanner.nextLine();
+                        final String dateUpdateSqlQuery = "UPDATE publication SET publication_date = ? WHERE pid = ?;";
+                        PreparedStatement dateUpdateStatement = connection.prepareStatement(dateUpdateSqlQuery);
+                        dateUpdateStatement.setString(1, newDate);
+                        dateUpdateStatement.setInt(2, pid);
+                        updatedRows = dateUpdateStatement.executeUpdate();
+                        connection.commit();
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
 
-                case 4:
-                    System.out.println("Enter the new number of pages: \t");
-                    final int newNumberOfPages = scanner.nextInt();
-                    final String pagesUpdateSqlQuery = "UPDATE book SET number_of_pages = ? WHERE pid = ?;";
-                    PreparedStatement pagesUpdateStatement = connection.prepareStatement(pagesUpdateSqlQuery);
-                    pagesUpdateStatement.setInt(1, newNumberOfPages);
-                    pagesUpdateStatement.setInt(2, pid);
-                    updatedRows = pagesUpdateStatement.executeUpdate();
-                    connection.commit();
-                    System.out.println("Successfully updated " + updatedRows + "row(s).");
-                    break;
+                    case 3:
+                        System.out.println("Enter the new genre: \t");
+                        final String newGenre = scanner.nextLine();
+                        final String genreUpdateSqlQuery = "UPDATE publication SET genre = ? WHERE pid = ?;";
+                        PreparedStatement genreUpdateStatement = connection.prepareStatement(genreUpdateSqlQuery);
+                        genreUpdateStatement.setString(1, newGenre);
+                        genreUpdateStatement.setInt(2, pid);
+                        updatedRows = genreUpdateStatement.executeUpdate();
+                        connection.commit();
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
 
-                default:
-                    System.out.println("Invalid Input. Please try again");
+                    case 4:
+                        System.out.println("Enter the new number of pages: \t");
+                        final int newNumberOfPages = scanner.nextInt();
+                        final String pagesUpdateSqlQuery = "UPDATE book SET number_of_pages = ? WHERE pid = ?;";
+                        PreparedStatement pagesUpdateStatement = connection.prepareStatement(pagesUpdateSqlQuery);
+                        pagesUpdateStatement.setInt(1, newNumberOfPages);
+                        pagesUpdateStatement.setInt(2, pid);
+                        updatedRows = pagesUpdateStatement.executeUpdate();
+                        connection.commit();
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
 
+                    default:
+                        System.out.println("Invalid Input. Please try again");
+
+                }
+
+                connection.setAutoCommit(true);
+
+            } catch (Exception e) {
+                connection.rollback();
+                System.out.println("Exception Occurred: " + e.getMessage());
+                return false;
             }
-
-            connection.setAutoCommit(false);
-
         } catch (Exception e) {
             System.out.println("Exception Occurred: " + e.getMessage());
             return false;
@@ -160,45 +163,53 @@ public class EditingPublishingService {
 
         try {
             connection.setAutoCommit(false);
-            String sqlStatement1 = "INSERT INTO `publication` (`title`, `publication_date`, `genre`,`publication_type`) VALUES (?,?,?,?);";
-            PreparedStatement statement1 = connection.prepareStatement(sqlStatement1, Statement.RETURN_GENERATED_KEYS);
-            statement1.setString(1, title);
-            statement1.setString(2, publicationDate);
-            statement1.setString(3, genre);
-            statement1.setString(4, publicationType);
+            try {
 
-            statement1.executeUpdate();
+                String sqlStatement1 = "INSERT INTO `publication` (`title`, `publication_date`, `genre`,`publication_type`) VALUES (?,?,?,?);";
+                PreparedStatement statement1 = connection.prepareStatement(sqlStatement1, Statement.RETURN_GENERATED_KEYS);
+                statement1.setString(1, title);
+                statement1.setString(2, publicationDate);
+                statement1.setString(3, genre);
+                statement1.setString(4, publicationType);
 
-            ResultSet rs = statement1.getGeneratedKeys();
+                statement1.executeUpdate();
 
-            int pid = -1;
+                ResultSet rs = statement1.getGeneratedKeys();
 
-            if (rs.next()) {
-                pid = rs.getInt(1);
-            } else {
-                throw new SQLException("Could not insert into table publication");
+                int pid = -1;
+
+                if (rs.next()) {
+                    pid = rs.getInt(1);
+                } else {
+                    throw new SQLException("Could not insert into table publication");
+                }
+
+                String sqlStatement2 = "INSERT INTO `book` (`pid`, `number_of_pages`) VALUES (?,?);";
+                PreparedStatement statement2 = connection.prepareStatement(sqlStatement2);
+                statement2.setInt(1, pid);
+                statement2.setInt(2, numberOfPages);
+                statement2.executeUpdate();
+
+                String sqlStatement3 = "INSERT INTO `writes` (`sid`, `pid`) VALUES (?,?);";
+                PreparedStatement statement3 = connection.prepareStatement(sqlStatement3);
+                statement3.setInt(1, authorId);
+                statement3.setInt(2, pid);
+                statement3.executeUpdate();
+
+                connection.commit();
+                System.out.println("Book Publication successfully inserted (pid=" + pid + ").\n\n");
+                connection.setAutoCommit(true);
+
+            } catch (Exception e) {
+                connection.rollback();
+                System.out.println("Exception Occurred: " + e.getMessage());
+                return false;
             }
-
-            String sqlStatement2 = "INSERT INTO `book` (`pid`, `number_of_pages`) VALUES (?,?);";
-            PreparedStatement statement2 = connection.prepareStatement(sqlStatement2);
-            statement2.setInt(1, pid);
-            statement2.setInt(2, numberOfPages);
-            statement2.executeUpdate();
-
-            String sqlStatement3 = "INSERT INTO `writes` (`sid`, `pid`) VALUES (?,?);";
-            PreparedStatement statement3 = connection.prepareStatement(sqlStatement3);
-            statement3.setInt(1, authorId);
-            statement3.setInt(2, pid);
-            statement3.executeUpdate();
-
-            connection.commit();
-            System.out.println("Book Publication successfully inserted (pid=" + pid + ").\n\n");
-            connection.setAutoCommit(true);
-
         } catch (Exception e) {
             System.out.println("Exception Occurred: " + e.getMessage());
             return false;
         }
+
         return true;
     }
 }
