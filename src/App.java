@@ -1,5 +1,7 @@
 import service.ConnectionHelper;
+import service.DistributionService;
 import service.EditingPublishingService;
+import service.ReportsService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -36,6 +38,16 @@ public class App {
                         case 1:
                             EditingPublishingService editingPublishingService = new EditingPublishingService();
                             editingPublishingService.run(connection);
+                            break;
+
+                        case 3:
+                            DistributionService distributionService = new DistributionService();
+                            distributionService.run(connection);
+                            break;
+
+                        case 4:
+                            ReportsService reportsService = new ReportsService();
+                            reportsService.run(connection);
                             break;
 
                         case 5:
