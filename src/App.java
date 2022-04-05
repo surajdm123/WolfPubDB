@@ -39,6 +39,11 @@ public class App {
                             editingPublishingService.run(connection);
                             break;
 
+                        case 2:
+                            ProductionService productionService = new ProductionService();
+                            productionService.run(connection);
+                            break;
+
                         case 3:
                             DistributionService distributionService = new DistributionService();
                             distributionService.run(connection);
