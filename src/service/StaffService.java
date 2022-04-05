@@ -1,9 +1,6 @@
 package service;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Scanner;
 
 public class StaffService {
@@ -83,7 +80,6 @@ public class StaffService {
         System.out.println("Enter the hire date (yyyy-mm-dd): ");
         final String hiredate = scanner.nextLine();
 
-        System.out.println("Choose a title from the options below: ");
         String title = "";
 
         try {
@@ -91,7 +87,7 @@ public class StaffService {
                 connection.setAutoCommit(false);
 
                 final String staffAdminQuery = "INSERT INTO `staff` (`name`, `dob`, `address`, `phone`, `emailID`, `hireDate`, `title`) VALUES (?,?,?,?,?,?,?);";
-                PreparedStatement statement1 = connection.prepareStatement(staffAdminQuery);
+                PreparedStatement statement1 = connection.prepareStatement(staffAdminQuery, Statement.RETURN_GENERATED_KEYS);
                 statement1.setString(1, name);
                 statement1.setString(2, dob);
                 statement1.setString(3, address);
