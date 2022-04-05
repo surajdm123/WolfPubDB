@@ -77,7 +77,7 @@ CREATE TABLE `distributor` (
   `city` VARCHAR(45) NOT NULL,
   `phoneNum` VARCHAR(45) NOT NULL,
   `contact` VARCHAR(45) NOT NULL,
-  `balanceAmount` DOUBLE,
+  `balanceAmount` DOUBLE DEFAULT 0,
  
 PRIMARY KEY (`distributorId`))
 ;

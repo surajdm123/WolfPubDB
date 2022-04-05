@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 public class EditingPublishingService {
 
-    ConnectionHelper connectionHelper = new ConnectionHelper();
     Scanner scanner = new Scanner(System.in);
     ResultSetService resultSetService = new ResultSetService();
 

@@ -1,10 +1,8 @@
-import service.ConnectionHelper;
-import service.DistributionService;
-import service.EditingPublishingService;
-import service.ReportsService;
+import service.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 
 public class App {
@@ -29,7 +27,8 @@ public class App {
                     System.out.println("2. Production");
                     System.out.println("3. Distribution");
                     System.out.println("4. Reports");
-                    System.out.println("5. Exit\n");
+                    System.out.println("5. Staff Processing");
+                    System.out.println("6. Exit\n");
 
                     System.out.println("Enter your choice: \t");
                     int choice = scanner.nextInt();
@@ -51,6 +50,11 @@ public class App {
                             break;
 
                         case 5:
+                            StaffService staffService = new StaffService();
+                            staffService.run(connection);
+                            break;
+
+                        case 6:
                             System.exit(1);
                             break;
 
