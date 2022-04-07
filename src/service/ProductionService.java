@@ -30,25 +30,24 @@ public class ProductionService {
 
                 System.out.println("ARTICLES IN A PUBLICATION ISSUE:");
                 System.out.println("9. Enter/Insert new article");
-                System.out.println("10. Update an article");
-                System.out.println("11. Update an article\n");
+                System.out.println("10. Update an article\n");
 
                 System.out.println("SEARCH FOR BOOKS:");
-                System.out.println("12. Find a book by topic/genre");
-                System.out.println("13. Find a book by date");
-                System.out.println("14. Find a book by author name\n");
+                System.out.println("11. Find a book by topic/genre");
+                System.out.println("12. Find a book by date");
+                System.out.println("13. Find a book by author name\n");
 
                 System.out.println("SEARCH FOR ARTICLES:");
-                System.out.println("15. Find an article by topic/genre");
-                System.out.println("16. Find an article by date");
-                System.out.println("17. Find an article by author name\n");
+                System.out.println("14. Find an article by topic/genre");
+                System.out.println("15. Find an article by date");
+                System.out.println("16. Find an article by author name\n");
 
                 System.out.println("PAYMENT:");
-                System.out.println("18. Set payment for an editor");
-                System.out.println("19. Set payment for an author");
-                System.out.println("20. Get payment claimed details\n");
+                System.out.println("17. Set payment for an editor");
+                System.out.println("18. Set payment for an author");
+                System.out.println("19. Get payment claimed details\n");
 
-                System.out.println("21. Return to Main Menu\n");
+                System.out.println("20. Return to Main Menu\n");
 
                 System.out.println("Enter your choice:");
 
@@ -57,79 +56,78 @@ public class ProductionService {
 
                 switch(choice){
                     case 1:
-
+                        insertNewBookEdition(connection);
                         break;
                     case 2:
-
+                        updateBookEdition(connection);
                         break;
                     case 3:
-
+                        deleteBookEdition(connection);
                         break;
                     case 4:
-
+                        insertNewIssue(connection);
                         break;
                     case 5:
-
+                        updateIssue(connection);
                         break;
                     case 6:
-
+                        deleteIssue(connection);
                         break;
                     case 7:
-
+                        insertNewBookChapter(connection);
                         break;
                     case 8:
-
+                        updateBookChapter(connection);
                         break;
                     case 9:
-
+                        insertNewArticle(connection);
                         break;
                     case 10:
-
+                        updateArticle(connection);
                         break;
                     case 11:
-
+                        findBookByTopic(connection);
                         break;
                     case 12:
-
+                        findBookByDate(connection);
                         break;
                     case 13:
-
+                        findBookByAuthor(connection);
                         break;
                     case 14:
-
+                        findArticleByTopic(connection);
                         break;
                     case 15:
-
+                        findArticleByDate(connection);
                         break;
                     case 16:
-
+                        findArticleByAuthor(connection);
                         break;
                     case 17:
-
+                        setPaymentForEditor(connection);
                         break;
                     case 18:
-
+                        setPaymentForAuthor(connection);
                         break;
                     case 19:
-
+                        getPaymentClaimDetails(connection);
                         break;
                     case 20:
-
-                        break;
-                    case 21:
                         break;
                     default:
                         System.out.println("Invalid Input");
                 }
 
-                if (choice == 21) {
+                if (choice == 20) {
                     break;
                 }
             }
         } catch (Exception e) {
-            System.out.println("Exception occured: " + e.getMessage());
+            System.out.println("Exception occurred: " + e.getMessage());
         }
 
     }
+
+
 
 }
