@@ -128,6 +128,80 @@ public class ProductionService {
 
     }
 
+    public boolean insertNewBookEdition(final Connection connection){
 
+    }
+
+    public boolean updateBookEdition(final Connection connection){
+
+    }
+
+    public boolean deleteBookEdition(final Connection connection){
+
+    }
+
+    public boolean insertNewIssue(final Connection connection){
+
+    }
+
+    public boolean updateIssue(final Connection connection){
+
+    }
+
+    public boolean deleteIssue(final Connection connection){
+
+    }
+
+    public boolean insertNewBookChapter(final Connection connection){
+
+    }
+
+    public boolean updateBookChapter(final Connection connection){
+
+    }
+
+    public boolean insertNewArticle(final Connection connection){
+
+    }
+
+    public boolean updateArticle(final Connection connection){
+
+    }
+
+    public boolean findBookByTopic(final Connection connection){
+
+    }
+
+    public boolean findBookByDate(final Connection connection){
+
+    }
+
+    public boolean findBookByAuthor(final Connection connection){
+
+    }
+
+    public boolean findArticleByTopic(final Connection connection){
+
+    }
+
+    public boolean findArticleByDate(final Connection connection){
+
+    }
+
+    public boolean findArticleByAuthor(final Connection connection){
+
+    }
+
+    public boolean setPaymentForEditor(final Connection connection){
+
+    }
+
+    public boolean setPaymentForAuthor(final Connection connection){
+
+    }
+
+    public boolean getPaymentClaimDetails(final Connection connection){
+
+    }
 
 }
