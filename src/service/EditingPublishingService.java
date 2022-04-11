@@ -97,11 +97,12 @@ public class EditingPublishingService {
         int choice = scanner.nextInt();
         try {
 
+
             switch (choice) {
                 case 1:
                     System.out.println("Enter Publication ID: ");
                     int publicationId = scanner.nextInt();
-                    final String sqlQuery = "SELECT * FROM publication where pid=?;";
+                    final String sqlQuery = "SELECT publication.*, GROUP_CONCAT(staff.name) as 'Author Name(s)' FROM publication NATURAL JOIN writes JOIN staff ON writes.sid = staff.sid WHERE pid=? GROUP BY publication.pid;";
                     PreparedStatement statement = connection.prepareStatement(sqlQuery);
                     statement.setInt(1, publicationId);
                     ResultSet resultSet = statement.executeQuery();
@@ -111,7 +112,7 @@ public class EditingPublishingService {
                     scanner.nextLine();
                     System.out.println("Enter Publication Title: ");
                     String title = scanner.nextLine();
-                    final String query = "SELECT * FROM publication where title=?;";
+                    final String query = "SELECT publication.*, GROUP_CONCAT(staff.name) as 'Author Name(s)' FROM publication NATURAL JOIN writes JOIN staff ON writes.sid = staff.sid WHERE publication.title=? GROUP BY publication.pid;";
                     PreparedStatement preparedStatement = connection.prepareStatement(query);
                     preparedStatement.setString(1, title);
                     ResultSet rs = preparedStatement.executeQuery();
@@ -132,11 +133,14 @@ public class EditingPublishingService {
 
     public boolean getAllPublicationsAssignedToEditor(final Connection connection) {
 
+        System.out.println("Details about all the Editors: \n");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM staff where title = 'Editor';");
+
         System.out.println("Enter the editor ID: ");
         final int editorId = scanner.nextInt();
 
         try {
-            final String sqlQuery = "SELECT * FROM publication NATURAL JOIN edits where sid=?;";
+            final String sqlQuery = "SELECT publication.*, edits.status FROM publication NATURAL JOIN edits where sid=?;";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setInt(1, editorId);
 
@@ -153,6 +157,9 @@ public class EditingPublishingService {
     }
 
     public boolean addChapter(final Connection connection) {
+
+        System.out.println("Publications in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT publication.*, book.number_of_pages, editions.* from publication NATURAL JOIN book NATURAL JOIN editions");
 
         System.out.println("Enter the Chapter Number: ");
         final int chapterNumber = scanner.nextInt();
@@ -200,6 +207,9 @@ public class EditingPublishingService {
     }
 
     public boolean addArticle(final Connection connection) {
+
+        System.out.println("Periodic publications present in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT publication.*, issues.issueId, issues.issue_title from publication NATURAL JOIN periodic_publication JOIN issues ON issues.pid = periodic_publication.pid;");
 
         System.out.println("Enter the publication ID: ");
         final int publicationId = scanner.nextInt();
@@ -294,6 +304,11 @@ public class EditingPublishingService {
 
     public boolean deleteChapter(final Connection connection) {
 
+        System.out.println("Chapters of publications in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from chapters;");
+
+        System.out.println("\nEnter the following details to delete a chapter.\n");
+
         System.out.println("Enter the Chapter Number: ");
         final int chapterNumber = scanner.nextInt();
 
@@ -342,6 +357,11 @@ public class EditingPublishingService {
 
     public boolean deleteArticle(final Connection connection) {
 
+        System.out.println("Articles present in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM articles;");
+
+        System.out.println("\nEnter the following information to delete the article.\n");
+
         System.out.println("Enter the Article Id: ");
         final int articleNumber = scanner.nextInt();
 
@@ -388,6 +408,10 @@ public class EditingPublishingService {
     }
 
     public boolean updateBookPublication(Connection connection) {
+
+        System.out.println("Books in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT publication.*, book.number_of_pages FROM publication NATURAL JOIN book;");
+
         System.out.println("Enter Book Publication ID you want to update: ");
         final int pid = scanner.nextInt();
 
@@ -608,6 +632,10 @@ public class EditingPublishingService {
     }
 
     public boolean updatePeriodicPublication(Connection connection) {
+
+        System.out.println("Periodic Publications in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT publication.*, periodic_publication.periodicity FROM publication NATURAL JOIN periodic_publication;");
+
         System.out.println("Enter Periodic Publication ID you want to update: ");
         final int pid = scanner.nextInt();
 

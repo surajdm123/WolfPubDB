@@ -144,6 +144,7 @@ CREATE TABLE `publication` (
 CREATE TABLE `edits` (
   `sid` INT NOT NULL,
   `pid` INT NOT NULL,
+  status VARCHAR(50) NOT NULL DEFAULT "IN_PROGRESS"
   PRIMARY KEY (`sid`, `pid`),
      FOREIGN KEY (`sid`)
      REFERENCES `editor` (`sid`)

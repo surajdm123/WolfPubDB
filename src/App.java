@@ -28,7 +28,8 @@ public class App {
                     System.out.println("3. Distribution");
                     System.out.println("4. Reports");
                     System.out.println("5. Staff Processing");
-                    System.out.println("6. Exit\n");
+                    System.out.println("6. View Details");
+                    System.out.println("7. Exit\n");
 
                     System.out.println("Enter your choice: \t");
                     int choice = scanner.nextInt();
@@ -60,6 +61,11 @@ public class App {
                             break;
 
                         case 6:
+                            ViewingService viewingService = new ViewingService();
+                            viewingService.run(connection);
+                            break;
+
+                        case 7:
                             System.exit(1);
                             break;
 

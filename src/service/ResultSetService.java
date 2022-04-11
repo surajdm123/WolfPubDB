@@ -65,4 +65,14 @@ public class ResultSetService {
 
     }
 
+    public void runQueryAndPrintOutputRowFormat(final Connection connection, final String sqlQuery) {
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
+            viewFromResultSet(resultSet);
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+        }
+    }
+
 }
