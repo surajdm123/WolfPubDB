@@ -78,7 +78,7 @@ public class DistributionService {
         System.out.println("Enter the Distributor Name: ");
         final String name = scanner.nextLine();
 
-        System.out.println("Enter the Distributor Type(Accepted Distributor Types:Wholesale/Bookstore/Library): ");
+        System.out.println("Enter the Distributor Type(Valid Distributor Types:Wholesale/Bookstore/Library): ");
         final String type = scanner.nextLine();
 
         System.out.println("Enter the Distributor Street Address: ");
@@ -93,10 +93,13 @@ public class DistributionService {
         System.out.println("Enter the Distributor Contact: ");
         final String contact = scanner.nextLine();
 
+        System.out.println("Enter Distributor Initial Balance: ");
+        final int balanceAmount = scanner.nextInt();
+
         try {
             connection.setAutoCommit(false);
             try {
-                final String sqlQuery = "INSERT INTO `distributor` (`name`, `type`, `streetAddress`, `city`,`phoneNum`, `contact`, `balanceAmount` ) VALUES (?, ?, ?, ?, ?, ?, 0);";
+                final String sqlQuery = "INSERT INTO `distributor` (`name`, `type`, `streetAddress`, `city`,`phoneNum`, `contact`, `balanceAmount` ) VALUES (?, ?, ?, ?, ?, ?, ?);";
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setString(1, name);
                 statement.setString(2, type);
@@ -104,6 +107,7 @@ public class DistributionService {
                 statement.setString(4, city);
                 statement.setString(5, phoneNum);
                 statement.setString(6, contact);
+                statement.setInt(7, balanceAmount );
 
                 statement.executeUpdate();
 
@@ -298,7 +302,150 @@ public class DistributionService {
 
     public boolean insertNewBillDistributor(final Connection connection) {
 
+        System.out.println(("Do you want to place order for edition of a book or an issue of article? "));
+        System.out.println("1. Place order for Book Edition");
+        System.out.println(("2. Place order for Issue of Article"));
+        System.out.println("Enter your choice : \t");
+
+        final int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.println("Enter the Distributor ID for whom you want to place the order \t");
+        final String distributorId = scanner.nextLine();
+
+        System.out.println("Enter the Shipping cost for the distributor location: ");
+        final int shipCost = scanner.nextInt();
+
+        System.out.println("Enter the order date (yyyy-mm-dd):");
+        final String orderDate = scanner.nextLine();
+
+        System.out.println("Enter the price ");
+        final int price = scanner.nextInt();
+
+        System.out.println("Enter the number of copies you want to place order for:");
+        final int number_of_copies = scanner.nextInt();
+
+        System.out.println("Enter the Delivery Date (yyyy-mm-dd): ");
+        final String deliveryDate = scanner.nextLine();
+
+        System.out.println("Enter the Status: ");
+        final String status = scanner.nextLine();
+
+        try {
+            connection.setAutoCommit(false);
+            try {
+
+                switch (choice) {
+                    case 1:
+                        ResultSetService resultSetService = new ResultSetService();
+                        resultSetService.runQueryAndPrintOutput(connection, "select * from editions");
+
+                        System.out.println(("Enter the edition number of the book for current order:"));
+                        final int edition_number = scanner.nextInt();
+
+                        final String pid = "SELECT pid FROM editions where edition_number = ?;";
+                        PreparedStatement e_statement = connection.prepareStatement(pid);
+                        e_statement.setInt(1, edition_number);
+
+                        final String sqlQuery = "INSERT INTO `orders` (`distributorId`, `shipCost`, `orderDate`, `price`,`deliveryDate`, `status`) VALUES (?, ?, ?, ?, ?, ?);";
+                        PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                        statement.setString(1, distributorId);
+                        statement.setInt(2, shipCost);
+                        statement.setString(3, orderDate);
+                        statement.setInt(4, price);
+                        statement.setString(5, deliveryDate);
+                        statement.setString(6, status);
+                        statement.executeUpdate();
+
+                        ResultSet rs = statement.getGeneratedKeys();
+
+                        int orderId = -1;
+
+                        if (rs.next()) {
+                            orderId = rs.getInt(1);
+                        } else {
+                            throw new SQLException("Could not insert into table orders");
+                        }
+
+                        final String sqlQuery1 = "INSERT INTO `includes` (`orderId`, `pid`, `edition_number`, `number_of_copies`) VALUES (?, ?, ?, ?);";
+                        PreparedStatement statement1 = connection.prepareStatement(sqlQuery1);
+                        statement1.setInt(1, orderId);
+                        statement1.setInt(2, Integer.parseInt(pid));
+                        statement1.setInt(3, edition_number);
+                        statement1.setInt(4, number_of_copies);
+                        statement1.executeUpdate();
+
+                        final int total = (price * number_of_copies)+shipCost;
+                        connection.commit();
+
+                        System.out.printf("Successfully placed order for the Book Edition. The Total Bill amount for ths order is : %d", total );
+                        connection.setAutoCommit(true);
+                        break;
+
+                    case 2:
+                        ResultSetService resultSetService1 = new ResultSetService();
+                        resultSetService1.runQueryAndPrintOutput(connection, "select * from issues");
+
+                        System.out.println(("Enter the issue id of the article for current order:"));
+                        final int issueId = scanner.nextInt();
+
+                        final String pid1 = "SELECT pid FROM issues where issueId = ?;";
+                        PreparedStatement i_statement = connection.prepareStatement(pid1);
+                        i_statement.setInt(1, issueId);
+
+                        final String sqlQuery2 = "INSERT INTO `orders` (`distributorId`, `shipCost`, `orderDate`, `price`,`deliveryDate`, `status`) VALUES (?, ?, ?, ?, ?, ?);";
+                        PreparedStatement statement2 = connection.prepareStatement(sqlQuery2);
+                        statement2.setString(1, distributorId);
+                        statement2.setInt(2, shipCost);
+                        statement2.setString(3, orderDate);
+                        statement2.setInt(4, price);
+                        statement2.setString(5, deliveryDate);
+                        statement2.setString(6, status);
+                        statement2.executeUpdate();
+
+                        ResultSet res = statement2.getGeneratedKeys();
+
+                        int order_id = -1;
+
+                        if (res.next()) {
+                            order_id = res.getInt(1);
+                        } else {
+                            throw new SQLException("Could not insert into table orders");
+                        }
+
+                        final String sqlQuery3 = "INSERT INTO `consists` (`orderId`, `pid`, `issueId`, `number_of_copies`) VALUES (?, ?, ?, ?);";
+                        PreparedStatement statement3 = connection.prepareStatement(sqlQuery3);
+                        statement3.setInt(1, order_id);
+                        statement3.setInt(2, Integer.parseInt(pid1));
+                        statement3.setInt(3, issueId);
+                        statement3.setInt(4, number_of_copies);
+                        statement3.executeUpdate();
+
+                        final int total1 = (price * number_of_copies)+shipCost;
+                        connection.commit();
+
+                        System.out.printf("Successfully placed order for the Issue of Article. The Total Bill amount for ths order is : %d", total1 );
+                        connection.setAutoCommit(true);
+                        break;
+
+                    default:
+                        System.out.println("Invalid Input. Please try again");
+
+                }
+
+                connection.setAutoCommit(true);
+
+            } catch (Exception e) {
+                connection.rollback();
+                System.out.println("Exception Occurred: " + e.getMessage());
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
         return true;
+
     }
 
     public boolean updateDistributorOutstandingBalance(final Connection connection) {
