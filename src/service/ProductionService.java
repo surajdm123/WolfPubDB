@@ -505,9 +505,137 @@ public class ProductionService {
 
     public boolean insertNewBookChapter(final Connection connection){
 
+        System.out.println("Here is a list of chapters and their details for various books in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from chapters;");
+
+        System.out.println("Enter the publication ID of the book for which you want to add a chapter: ");
+        final int pubID = scanner.nextInt();
+
+        System.out.println("Enter the edition number of the above book for which you want to add a chapter: ");
+        final int edNum = scanner.nextInt();
+
+        System.out.println("Enter the chapter number: ");
+        final int chapNum = scanner.nextInt();
+
+        System.out.println("Enter the chapter name: ");
+        final String chapName = scanner.nextLine();
+
+        System.out.println("Enter the text/content of the chapter: ");
+        final String chapText = scanner.nextLine();
+
+        try {
+            connection.setAutoCommit(false);
+            try {
+                final String sqlQuery = "INSERT INTO `chapters` (`chapter_number`, `pid`, `edition_number`, `chapter_name`, `text`) VALUES (?, ?, ?, ?, ?);";
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                statement.setInt(1, chapNum);
+                statement.setInt(2, pubID);
+                statement.setInt(3, edNum);
+                statement.setString(4, chapName);
+                statement.setString(5, chapText);
+
+                statement.executeUpdate();
+
+                connection.commit();
+
+                System.out.println("Successfully inserted new chapter");
+                connection.setAutoCommit(true);
+
+            } catch(Exception e) {
+                connection.rollback();
+                System.out.println("Transaction rolled back - Exception occurred: " + e.getMessage());
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+        return true;
+
     }
 
     public boolean updateBookChapter(final Connection connection){
+
+        System.out.println("Here is a list of book chapters and their details:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM chapters;");
+
+        System.out.println("Enter the chapter number you want to update: ");
+        final int chapNum = scanner.nextInt();
+
+        System.out.println("Enter the publication ID of the above chapter: ");
+        final int pid = scanner.nextInt();
+
+        System.out.println("Enter the edition number of the above chapter: ");
+        final int edNum = scanner.nextInt();
+
+        System.out.println("What would you like to update for the above selected chapter?");
+        System.out.println("1. Chapter Name");
+        System.out.println("2. Chapter Text/Content");
+
+        System.out.println("Enter your choice: \t");
+        final int choice = scanner.nextInt();
+
+        scanner.nextLine();
+
+        int updatedRows = 0;
+
+        try {
+            connection.setAutoCommit(false);
+            try {
+
+                switch (choice) {
+                    case 1:
+                        System.out.println("Enter the new name of the chapter: \t");
+                        final String newName = scanner.nextLine();
+
+                        final String nameUpdateSqlQuery = "UPDATE chapters SET chapter_name = ? WHERE (`chapter_number` = ?) AND (`pid` = ?) AND (`edition_number` = ?);";
+                        PreparedStatement nameUpdateStatement = connection.prepareStatement(nameUpdateSqlQuery);
+                        nameUpdateStatement.setString(1, newName);
+                        nameUpdateStatement.setInt(2, chapNum);
+                        nameUpdateStatement.setInt(3, pid);
+                        nameUpdateStatement.setInt(4, edNum);
+
+                        updatedRows = nameUpdateStatement.executeUpdate();
+                        connection.commit();
+
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
+
+                    case 2:
+                        System.out.println("Enter the new text/content of the chapter: \t");
+                        final String newText = scanner.nextLine();
+
+                        final String textUpdateSqlQuery = "UPDATE chapters SET text = ? WHERE (`chapter_number` = ?) AND (`pid` = ?) AND (`edition_number` = ?);";
+                        PreparedStatement textUpdateStatement = connection.prepareStatement(textUpdateSqlQuery);
+                        textUpdateStatement.setString(1, newText);
+                        textUpdateStatement.setInt(2, chapNum);
+                        textUpdateStatement.setInt(3, pid);
+                        textUpdateStatement.setInt(4, edNum);
+
+                        updatedRows = textUpdateStatement.executeUpdate();
+                        connection.commit();
+
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
+
+                    default:
+                        System.out.println("Invalid Input. Please try again");
+
+                }
+
+                connection.setAutoCommit(true);
+
+            } catch (Exception e) {
+                connection.rollback();
+                System.out.println("Exception Occurred: " + e.getMessage());
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
 
     }
 
