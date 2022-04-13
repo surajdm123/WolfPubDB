@@ -641,9 +641,155 @@ public class ProductionService {
 
     public boolean insertNewArticle(final Connection connection){
 
+        System.out.println("Here is a list of magazine/journal issues:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from issues;");
+
+        System.out.println("Enter the issue ID of the issue for which you want to add an article: ");
+        final int issueID = scanner.nextInt();
+
+        System.out.println("Enter the publication ID of the above issue: ");
+        final int pubID = scanner.nextInt();
+
+        System.out.println("Enter the name of the new article: ");
+        final String articleName = scanner.nextLine();
+
+        System.out.println("Enter the text/content of the new article: ");
+        final String articleText = scanner.nextLine();
+
+        System.out.println("Enter the article date (yyyy-mm-dd): ");
+        final String articleDate = scanner.nextLine();
+
+        try {
+            connection.setAutoCommit(false);
+            try {
+                final String sqlQuery = "INSERT INTO `articles` (`pid`, `issueId`, `text`, `date`, `name`) VALUES (?, ?, ?, ?, ?);";
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                statement.setInt(1, pubID);
+                statement.setInt(2, issueID);
+                statement.setString(3, articleText);
+                statement.setString(4, articleDate);
+                statement.setString(5, articleName);
+
+                statement.executeUpdate();
+
+                connection.commit();
+
+                System.out.println("Successfully inserted new article");
+                connection.setAutoCommit(true);
+
+            } catch(Exception e) {
+                connection.rollback();
+                System.out.println("Transaction rolled back - Exception occurred: " + e.getMessage());
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+        return true;
+
     }
 
     public boolean updateArticle(final Connection connection){
+
+        System.out.println("Here is a list of articles present in various issues of magazines/journals:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM articles;");
+
+        System.out.println("Enter the article ID you want to update: ");
+        final int articleID = scanner.nextInt();
+
+        System.out.println("Enter the publication ID of the above article: ");
+        final int pid = scanner.nextInt();
+
+        System.out.println("Enter the issue ID of the above article: ");
+        final int issueID = scanner.nextInt();
+
+        System.out.println("What would you like to update for the above selected article?");
+        System.out.println("1. Article Text/Content");
+        System.out.println("2. Article Date");
+        System.out.println("3. Article Name");
+
+        System.out.println("Enter your choice: \t");
+        final int choice = scanner.nextInt();
+
+        scanner.nextLine();
+
+        int updatedRows = 0;
+
+        try {
+            connection.setAutoCommit(false);
+            try {
+
+                switch (choice) {
+                    case 1:
+                        System.out.println("Enter the new text/content of the article: \t");
+                        final String newText = scanner.nextLine();
+
+                        final String textUpdateSqlQuery = "UPDATE articles SET text = ? WHERE (`articleId` = ?) AND (`pid` = ?) AND (`issueId` = ?);";
+                        PreparedStatement textUpdateStatement = connection.prepareStatement(textUpdateSqlQuery);
+                        textUpdateStatement.setString(1, newText);
+                        textUpdateStatement.setInt(2, articleID);
+                        textUpdateStatement.setInt(3, pid);
+                        textUpdateStatement.setInt(4, issueID);
+
+                        updatedRows = textUpdateStatement.executeUpdate();
+                        connection.commit();
+
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
+
+                    case 2:
+                        System.out.println("Enter the new date (yyyy-mm-dd) of the article: \t");
+                        final String newDate = scanner.nextLine();
+
+                        final String dateUpdateSqlQuery = "UPDATE articles SET date = ? WHERE (`articleId` = ?) AND (`pid` = ?) AND (`issueId` = ?);";
+                        PreparedStatement dateUpdateStatement = connection.prepareStatement(dateUpdateSqlQuery);
+                        dateUpdateStatement.setString(1, newDate);
+                        dateUpdateStatement.setInt(2, articleID);
+                        dateUpdateStatement.setInt(3, pid);
+                        dateUpdateStatement.setInt(4, issueID);
+
+                        updatedRows = dateUpdateStatement.executeUpdate();
+                        connection.commit();
+
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
+
+                    case 3:
+                        System.out.println("Enter the new name of the article: \t");
+                        final String newName = scanner.nextLine();
+
+                        final String nameUpdateSqlQuery = "UPDATE articles SET name = ? WHERE (`articleId` = ?) AND (`pid` = ?) AND (`issueId` = ?);";
+                        PreparedStatement nameUpdateStatement = connection.prepareStatement(nameUpdateSqlQuery);
+                        nameUpdateStatement.setString(1, newName);
+                        nameUpdateStatement.setInt(2, articleID);
+                        nameUpdateStatement.setInt(3, pid);
+                        nameUpdateStatement.setInt(4, issueID);
+
+                        updatedRows = nameUpdateStatement.executeUpdate();
+                        connection.commit();
+
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
+
+                    default:
+                        System.out.println("Invalid Input. Please try again");
+
+                }
+
+                connection.setAutoCommit(true);
+
+            } catch (Exception e) {
+                connection.rollback();
+                System.out.println("Exception Occurred: " + e.getMessage());
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
 
     }
 
