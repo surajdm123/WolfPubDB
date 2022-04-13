@@ -334,13 +334,73 @@ public class ProductionService {
 
     public boolean findArticleByTopic(final Connection connection){
 
+        System.out.println("We currently have magazines/journals of the following topics/genres: \n");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT DISTINCT(genre) FROM publication where publication_type = 'Magazine' or publication_type = 'Journal';");
+
+        System.out.println("Enter the topic/genre for which you would like to find articles in a magazine/journal: ");
+        String genre = scanner.nextLine();
+
+        try {
+            final String sqlQuery = "SELECT a.name FROM publication p, articles a where p.pid=a.pid and (`genre` = ?);";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setInt(1, genre);
+
+            ResultSet resultSet = statement.executeQuery();
+            resultSetService.viewFromResultSet(resultSet);
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
+
     }
 
     public boolean findArticleByDate(final Connection connection){
 
+        System.out.println("Enter the date (yyyy-mm-dd) for which you would like to find article(s): ");
+        String articleDate = scanner.nextLine();
+
+        try {
+            final String sqlQuery = "SELECT name FROM articles where (`date` = ?);";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setInt(1, articleDate);
+
+            ResultSet resultSet = statement.executeQuery();
+            resultSetService.viewFromResultSet(resultSet);
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
+
     }
 
     public boolean findArticleByAuthor(final Connection connection){
+
+        System.out.println("Here is a list of authors: \n");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT name FROM staff where title = 'Author';");
+
+        System.out.println("Enter the name of the author whose articles you would like to find: ");
+        String authorName = scanner.nextLine();
+
+        try {
+            final String sqlQuery = "SELECT name FROM publication p, articles a where p.pid = a.pid AND p.pid IN (SELECT publication.pid from publication, writes where publication.pid = writes.pid AND writes.sid IN (SELECT sid from staff where (`name` = ?) and title='Author'));";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setInt(1, authorName);
+
+            ResultSet resultSet = statement.executeQuery();
+            resultSetService.viewFromResultSet(resultSet);
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
 
     }
 
