@@ -130,9 +130,128 @@ public class ProductionService {
 
     public boolean insertNewBookEdition(final Connection connection){
 
+        System.out.println("Here is a list of books in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT pid, title, publication_date, genre from publication where publication_type='Book';");
+
+        System.out.println("Enter the publication ID of the book for which you want to add an edition: ");
+        final int pubID = scanner.nextInt();
+
+        System.out.println("Enter the edition number: ");
+        final int edNum = scanner.nextInt();
+
+        System.out.println("Enter the price of the new edition: ");
+        final double price = scanner.nextDouble();
+
+        System.out.println("Enter the ISBN of the new edition: ");
+        final String isbn = scanner.nextLine();
+
+        try {
+            connection.setAutoCommit(false);
+            try {
+                final String sqlQuery = "INSERT INTO `editions` (`edition_number`, `pid`, `price`, `isbn`) VALUES (?, ?, ?, ?);";
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                statement.setInt(1, edNum);
+                statement.setInt(2, pubID);
+                statement.setInt(3, price);
+                statement.setString(4, isbn);
+
+                statement.executeUpdate();
+
+                connection.commit();
+
+                System.out.println("Successfully inserted new edition");
+                connection.setAutoCommit(true);
+
+            } catch(Exception e) {
+                connection.rollback();
+                System.out.println("Transaction rolled back - Exception occurred: " + e.getMessage());
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+        return true;
+
     }
 
     public boolean updateBookEdition(final Connection connection){
+
+        System.out.println("Here is a list of book editions and their details:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM editions;");
+
+        System.out.println("Enter the edition number you want to update: ");
+        final int eNum = scanner.nextInt();
+
+        System.out.println("Enter the publication ID of the above edition: ");
+        final int pid = scanner.nextInt();
+
+        System.out.println("What would you like to update for the above selected edition?");
+        System.out.println("1. Price");
+        System.out.println("2. ISBN");
+
+        System.out.println("Enter your choice: \t");
+        final int choice = scanner.nextInt();
+
+        scanner.nextLine();
+
+        int updatedRows = 0;
+
+        try {
+            connection.setAutoCommit(false);
+            try {
+
+                switch (choice) {
+                    case 1:
+                        System.out.println("Enter the new price of the edition: \t");
+                        final double newPrice = scanner.nextDouble();
+
+                        final String priceUpdateSqlQuery = "UPDATE editions SET price = ? WHERE (`edition_number` = ?) AND (`pid` = ?);";
+                        PreparedStatement priceUpdateStatement = connection.prepareStatement(priceUpdateSqlQuery);
+                        priceUpdateStatement.setDouble(1, newPrice);
+                        priceUpdateStatement.setInt(2, eNum);
+                        priceUpdateStatement.setInt(3, pid);
+
+                        updatedRows = priceUpdateStatement.executeUpdate();
+                        connection.commit();
+
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
+
+                    case 2:
+                        System.out.println("Enter the new ISBN of the edition: \t");
+                        final String newISBN = scanner.nextLine();
+
+                        final String isbnUpdateSqlQuery = "UPDATE editions SET isbn = ? WHERE (`edition_number` = ?) AND (`pid` = ?);";
+                        PreparedStatement isbnUpdateStatement = connection.prepareStatement(isbnUpdateSqlQuery);
+                        isbnUpdateStatement.setString(1, newISBN);
+                        isbnUpdateStatement.setInt(2, eNum);
+                        isbnUpdateStatement.setInt(3, pid);
+
+                        updatedRows = dateUpdateStatement.executeUpdate();
+                        connection.commit();
+
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
+
+                    default:
+                        System.out.println("Invalid Input. Please try again");
+
+                }
+
+                connection.setAutoCommit(true);
+
+            } catch (Exception e) {
+                connection.rollback();
+                System.out.println("Exception Occurred: " + e.getMessage());
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
 
     }
 
