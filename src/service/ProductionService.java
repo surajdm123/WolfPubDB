@@ -138,6 +138,52 @@ public class ProductionService {
 
     public boolean deleteBookEdition(final Connection connection){
 
+       System.out.println("Here are the editions of all books in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from editions;");
+
+        System.out.println("\nEnter the following details to delete an edition.\n");
+
+        System.out.println("Enter the Edition Number: ");
+        final int editionNumber = scanner.nextInt();
+
+        System.out.println("Enter the publication ID: ");
+        final int publicationId = scanner.nextInt();
+
+        try {
+            connection.setAutoCommit(false);
+
+            try {
+
+                final String sqlQuery = "DELETE FROM `editions` WHERE (`edition_number` = ?) and (`pid` = ?);";
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                statement.setInt(1, editionNumber);
+                statement.setInt(2,publicationId);
+
+                int updatedRows = statement.executeUpdate();
+                connection.commit();
+
+                if(updatedRows == 0) {
+                    System.out.println("0 rows deleted. No tuple found with the mentioned details.");
+                } else {
+                    System.out.println("Successfully deleted " + updatedRows + " row(s).");
+                }
+
+                connection.setAutoCommit(true);
+
+            } catch (Exception e) {
+                connection.rollback();
+                System.out.println("Transaction rolled back - Exception Occurred: " + e.getMessage());
+                return false;
+            }
+
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
+
     }
 
     public boolean insertNewIssue(final Connection connection){
@@ -149,6 +195,52 @@ public class ProductionService {
     }
 
     public boolean deleteIssue(final Connection connection){
+
+        System.out.println("Here are all the issues of periodic publications in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from issues;");
+
+        System.out.println("\nEnter the following details to delete an issue.\n");
+
+        System.out.println("Enter the Issue ID: ");
+        final int issueID = scanner.nextInt();
+
+        System.out.println("Enter the publication ID: ");
+        final int publicationId = scanner.nextInt();
+
+        try {
+            connection.setAutoCommit(false);
+
+            try {
+
+                final String sqlQuery = "DELETE FROM `issues` WHERE (`issueId` = ?) and (`pid` = ?);";
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                statement.setInt(1, issueID);
+                statement.setInt(2,publicationId);
+
+                int updatedRows = statement.executeUpdate();
+                connection.commit();
+
+                if(updatedRows == 0) {
+                    System.out.println("0 rows deleted. No tuple found with the mentioned details.");
+                } else {
+                    System.out.println("Successfully deleted " + updatedRows + " row(s).");
+                }
+
+                connection.setAutoCommit(true);
+
+            } catch (Exception e) {
+                connection.rollback();
+                System.out.println("Transaction rolled back - Exception Occurred: " + e.getMessage());
+                return false;
+            }
+
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
 
     }
 
@@ -170,13 +262,73 @@ public class ProductionService {
 
     public boolean findBookByTopic(final Connection connection){
 
+        System.out.println("We currently have books of the following topics/genres: \n");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT DISTINCT(genre) FROM publication where publication_type = 'Book';");
+
+        System.out.println("Enter the topic/genre for which you would like to find books: ");
+        String genre = scanner.nextLine();
+
+        try {
+            final String sqlQuery = "SELECT title FROM publication where publication_type='Book' and (`genre` = ?);";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setInt(1, genre);
+
+            ResultSet resultSet = statement.executeQuery();
+            resultSetService.viewFromResultSet(resultSet);
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
+
     }
 
     public boolean findBookByDate(final Connection connection){
 
+        System.out.println("Enter the date (yyyy-mm-dd) for which you would like to find book(s): ");
+        String bookDate = scanner.nextLine();
+
+        try {
+            final String sqlQuery = "SELECT title FROM publication where publication_type='Book' and (`publication_date` = ?);";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setInt(1, bookDate);
+
+            ResultSet resultSet = statement.executeQuery();
+            resultSetService.viewFromResultSet(resultSet);
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
+
     }
 
     public boolean findBookByAuthor(final Connection connection){
+
+        System.out.println("Here is a list of authors: \n");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT name FROM staff where title = 'Author';");
+
+        System.out.println("Enter the name of the author whose books you would like to find: ");
+        String authorName = scanner.nextLine();
+
+        try {
+            final String sqlQuery = "SELECT title FROM publication, writes where publication.pid = writes.pid AND writes.sid IN (SELECT sid from staff where (`name` = ?) AND title='Author');";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setInt(1, authorName);
+
+            ResultSet resultSet = statement.executeQuery();
+            resultSetService.viewFromResultSet(resultSet);
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
 
     }
 
