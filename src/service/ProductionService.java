@@ -138,7 +138,7 @@ public class ProductionService {
 
     public boolean deleteBookEdition(final Connection connection){
 
-       System.out.println("Here are the editions of all books in the database:");
+        System.out.println("Here are the editions of all books in the database:");
         resultSetService.runQueryAndPrintOutput(connection, "SELECT * from editions;");
 
         System.out.println("\nEnter the following details to delete an edition.\n");
@@ -271,7 +271,7 @@ public class ProductionService {
         try {
             final String sqlQuery = "SELECT title FROM publication where publication_type='Book' and (`genre` = ?);";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
-            statement.setInt(1, genre);
+            statement.setString(1, genre);
 
             ResultSet resultSet = statement.executeQuery();
             resultSetService.viewFromResultSet(resultSet);
@@ -293,7 +293,7 @@ public class ProductionService {
         try {
             final String sqlQuery = "SELECT title FROM publication where publication_type='Book' and (`publication_date` = ?);";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
-            statement.setInt(1, bookDate);
+            statement.setString(1, bookDate);
 
             ResultSet resultSet = statement.executeQuery();
             resultSetService.viewFromResultSet(resultSet);
@@ -318,7 +318,7 @@ public class ProductionService {
         try {
             final String sqlQuery = "SELECT title FROM publication, writes where publication.pid = writes.pid AND writes.sid IN (SELECT sid from staff where (`name` = ?) AND title='Author');";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
-            statement.setInt(1, authorName);
+            statement.setString(1, authorName);
 
             ResultSet resultSet = statement.executeQuery();
             resultSetService.viewFromResultSet(resultSet);
@@ -343,7 +343,7 @@ public class ProductionService {
         try {
             final String sqlQuery = "SELECT a.name FROM publication p, articles a where p.pid=a.pid and (`genre` = ?);";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
-            statement.setInt(1, genre);
+            statement.setString(1, genre);
 
             ResultSet resultSet = statement.executeQuery();
             resultSetService.viewFromResultSet(resultSet);
@@ -365,7 +365,7 @@ public class ProductionService {
         try {
             final String sqlQuery = "SELECT name FROM articles where (`date` = ?);";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
-            statement.setInt(1, articleDate);
+            statement.setString(1, articleDate);
 
             ResultSet resultSet = statement.executeQuery();
             resultSetService.viewFromResultSet(resultSet);
@@ -390,7 +390,7 @@ public class ProductionService {
         try {
             final String sqlQuery = "SELECT name FROM publication p, articles a where p.pid = a.pid AND p.pid IN (SELECT publication.pid from publication, writes where publication.pid = writes.pid AND writes.sid IN (SELECT sid from staff where (`name` = ?) and title='Author'));";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
-            statement.setInt(1, authorName);
+            statement.setString(1, authorName);
 
             ResultSet resultSet = statement.executeQuery();
             resultSetService.viewFromResultSet(resultSet);
@@ -413,6 +413,27 @@ public class ProductionService {
     }
 
     public boolean getPaymentClaimDetails(final Connection connection){
+
+        System.out.println("Here is a list of authors and editors: \n");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT name FROM staff where title = 'Author' OR title = 'Editor';");
+
+        System.out.println("Enter the staff ID of the author/editor whose payment claim details you would like to see: ");
+        final int staffID = scanner.nextInt();
+
+        try {
+            final String sqlQuery = "SELECT * FROM payment where (`sid` = ?);";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setInt(1, staffID);
+
+            ResultSet resultSet = statement.executeQuery();
+            resultSetService.viewFromResultSet(resultSet);
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
 
     }
 
