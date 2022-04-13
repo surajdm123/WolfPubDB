@@ -307,9 +307,149 @@ public class ProductionService {
 
     public boolean insertNewIssue(final Connection connection){
 
+        System.out.println("Here is a list of magazines/journals in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT pid, title, publication_date, genre, publication_type from publication where publication_type='Magazine' OR publication_type='Journal';");
+
+        System.out.println("Enter the publication ID of the magazine/journal for which you want to add an issue: ");
+        final int pubID = scanner.nextInt();
+
+        System.out.println("Enter the Issue ID of the new issue to be added: ");
+        final int issueID = scanner.nextInt();
+
+        System.out.println("Enter the price of the new issue: ");
+        final double issuePrice = scanner.nextDouble();
+
+        System.out.println("Enter the title of the new issue: ");
+        final String issueTitle = scanner.nextLine();
+
+        System.out.println("Enter the issue date (yyyy-mm-dd): ");
+        final String issueDate = scanner.nextLine();
+
+        try {
+            connection.setAutoCommit(false);
+            try {
+                final String sqlQuery = "INSERT INTO `issues` (`issueID`, `pid`, `price`, `issue_title`, `issue_date`) VALUES (?, ?, ?, ?, ?);";
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                statement.setInt(1, issueID);
+                statement.setInt(2, pubID);
+                statement.setInt(3, issuePrice);
+                statement.setString(4, issueTitle);
+                statement.setString(5, issueDate);
+
+                statement.executeUpdate();
+
+                connection.commit();
+
+                System.out.println("Successfully inserted new issue");
+                connection.setAutoCommit(true);
+
+            } catch(Exception e) {
+                connection.rollback();
+                System.out.println("Transaction rolled back - Exception occurred: " + e.getMessage());
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+        return true;
+
     }
 
     public boolean updateIssue(final Connection connection){
+
+        System.out.println("Here is a list of magazine/journal issues and their details:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM issues;");
+
+        System.out.println("Enter the issue ID you want to update: ");
+        final int issueID = scanner.nextInt();
+
+        System.out.println("Enter the publication ID of the above issue: ");
+        final int pid = scanner.nextInt();
+
+        System.out.println("What would you like to update for the above selected issue?");
+        System.out.println("1. Price");
+        System.out.println("2. Issue Title");
+        System.out.println("3. Issue Date");
+
+        System.out.println("Enter your choice: \t");
+        final int choice = scanner.nextInt();
+
+        scanner.nextLine();
+
+        int updatedRows = 0;
+
+        try {
+            connection.setAutoCommit(false);
+            try {
+
+                switch (choice) {
+                    case 1:
+                        System.out.println("Enter the new price of the issue: \t");
+                        final double newPrice = scanner.nextDouble();
+
+                        final String priceUpdateSqlQuery = "UPDATE issues SET price = ? WHERE (`issueId` = ?) AND (`pid` = ?);";
+                        PreparedStatement priceUpdateStatement = connection.prepareStatement(priceUpdateSqlQuery);
+                        priceUpdateStatement.setDouble(1, newPrice);
+                        priceUpdateStatement.setInt(2, issueID);
+                        priceUpdateStatement.setInt(3, pid);
+
+                        updatedRows = priceUpdateStatement.executeUpdate();
+                        connection.commit();
+
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
+
+                    case 2:
+                        System.out.println("Enter the new title of the issue: \t");
+                        final String newTitle = scanner.nextLine();
+
+                        final String titleUpdateSqlQuery = "UPDATE issues SET issue_title = ? WHERE (`issueId` = ?) AND (`pid` = ?);";
+                        PreparedStatement titleUpdateStatement = connection.prepareStatement(titleUpdateSqlQuery);
+                        titleUpdateStatement.setString(1, newTitle);
+                        titleUpdateStatement.setInt(2, issueID);
+                        titleUpdateStatement.setInt(3, pid);
+
+                        updatedRows = titleUpdateStatement.executeUpdate();
+                        connection.commit();
+
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
+
+                    case 3:
+                        System.out.println("Enter the new date (yyyy-mm-dd) of the issue: \t");
+                        final String newDate = scanner.nextLine();
+
+                        final String dateUpdateSqlQuery = "UPDATE issues SET issue_date = ? WHERE (`issueId` = ?) AND (`pid` = ?);";
+                        PreparedStatement dateUpdateStatement = connection.prepareStatement(dateUpdateSqlQuery);
+                        dateUpdateStatement.setString(1, newDate);
+                        dateUpdateStatement.setInt(2, issueID);
+                        dateUpdateStatement.setInt(3, pid);
+
+                        updatedRows = dateUpdateStatement.executeUpdate();
+                        connection.commit();
+
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
+
+                    default:
+                        System.out.println("Invalid Input. Please try again");
+
+                }
+
+                connection.setAutoCommit(true);
+
+            } catch (Exception e) {
+                connection.rollback();
+                System.out.println("Exception Occurred: " + e.getMessage());
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
 
     }
 
