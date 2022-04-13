@@ -15,8 +15,7 @@ public class StaffService {
                 System.out.println("Choose from the following:");
                 System.out.println("1. Insert a new Staff member");
                 System.out.println("2. Delete a Staff member");
-                System.out.println("3. Update details of a staff member.\n");
-                System.out.println("4. Return to Main Menu\n");
+                System.out.println("3. Return to Main Menu\n");
                 System.out.println("Enter your choice: \t");
 
                 int choice = scanner.nextInt();
@@ -26,10 +25,9 @@ public class StaffService {
                         insertNewStaffMember(connection);
                         break;
                     case 2:
+                        deleteStaffMember(connection);
                         break;
                     case 3:
-                        break;
-                    case 4:
                         return;
                     default:
                         System.out.println("Invalid Input, Please try again.");
@@ -55,6 +53,30 @@ public class StaffService {
         int choice = scanner.nextInt();
         scanner.nextLine();
         return choice;
+    }
+
+    public void deleteStaffMember(final Connection connection) {
+        System.out.println("Staff members present in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM staff;");
+
+        System.out.println("Enter the sid of the staff member you want to delete:");
+        final int sid = scanner.nextInt();
+
+        try {
+            final String sqlQuery = "DELETE FROM `staff` WHERE (`sid` = ?)";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setInt(1, sid);
+
+            int updatedRows = statement.executeUpdate();
+
+            if(updatedRows == 0) {
+                System.out.println("0 rows deleted. No tuple found with the mentioned details.");
+            } else {
+                System.out.println("Successfully deleted " + updatedRows + " row(s).");
+            }
+        } catch (Exception e) {
+            System.out.println("Exception occurred: " + e.getMessage());
+        }
     }
 
     public void insertNewStaffMember(final Connection connection) {
