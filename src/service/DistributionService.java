@@ -1,7 +1,5 @@
 package service;
 
-import constants.MYSQL_CONSTANTS;
-
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -576,12 +574,7 @@ public class DistributionService {
         } catch (Exception e) {
             System.out.println("Exception Occurred: " + e.getMessage());
         }
-
-
-
-
         return true;
-
     }
 
     public boolean updateDistributorOutstandingBalance(final Connection connection) {
