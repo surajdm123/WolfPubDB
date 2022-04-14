@@ -1,6 +1,8 @@
 package service;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Scanner;
 
 public class ProductionService {
@@ -152,7 +154,7 @@ public class ProductionService {
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setInt(1, edNum);
                 statement.setInt(2, pubID);
-                statement.setInt(3, price);
+                statement.setDouble(3, price);
                 statement.setString(4, isbn);
 
                 statement.executeUpdate();
@@ -228,7 +230,7 @@ public class ProductionService {
                         isbnUpdateStatement.setInt(2, eNum);
                         isbnUpdateStatement.setInt(3, pid);
 
-                        updatedRows = dateUpdateStatement.executeUpdate();
+                        updatedRows = isbnUpdateStatement.executeUpdate();
                         connection.commit();
 
                         System.out.println("Successfully updated " + updatedRows + "row(s).");
@@ -332,7 +334,7 @@ public class ProductionService {
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setInt(1, issueID);
                 statement.setInt(2, pubID);
-                statement.setInt(3, issuePrice);
+                statement.setDouble(3, issuePrice);
                 statement.setString(4, issueTitle);
                 statement.setString(5, issueDate);
 
@@ -938,11 +940,11 @@ public class ProductionService {
     }
 
     public boolean setPaymentForEditor(final Connection connection){
-
+        return false;
     }
 
     public boolean setPaymentForAuthor(final Connection connection){
-
+        return false;
     }
 
     public boolean getPaymentClaimDetails(final Connection connection){
