@@ -696,7 +696,7 @@ public class EditingPublishingService {
 
         System.out.println("Periodic Publications in the database:");
         //Display publication, periodicity for a periodic publication type of publication entry
-        resultSetService.runQueryAndPrintOutput(connection, "SELECT publication.*, periodic_publication.periodicity FROM publication NATURAL JOIN periodic_publication;");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT publication.*, periodic_publication.periodicty FROM publication NATURAL JOIN periodic_publication;");
 
         System.out.println("Enter Periodic Publication ID you want to update: ");
         final int pid = scanner.nextInt();
