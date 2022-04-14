@@ -133,7 +133,7 @@ public class ReportsService {
     private boolean getExpensePublishingHouse(Connection connection) {
         try {
             /* query to get total expenses of the publishing house */
-            final String sqlQuery = "SELECT (SELECT SUM(amount) FROM payment) + (SELECT SUM(shipCost) FROM  orders) as expense;";
+            final String sqlQuery = "SELECT  COALESCE((SELECT SUM(amount) FROM payment),0) + COALESCE((SELECT SUM(shipCost) FROM  orders),0) as expense;";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
 
             ResultSet resultSet = statement.executeQuery();
