@@ -546,9 +546,13 @@ public class EditingPublishingService {
         try {
             connection.setAutoCommit(false); // Set auto commit property of the connection to false
             try {
-                // insert publication details including title, publication date, genre, publication type into publication table.
-                String sqlStatement1 = "INSERT INTO `publication` (`title`, `publication_date`, `genre`,`publication_type`) VALUES (?,?,?,?);";
-                PreparedStatement statement1 = connection.prepareStatement(sqlStatement1, Statement.RETURN_GENERATED_KEYS);
+                // insert publication details including title, publication date, genre, publication type
+                // into publication table.
+                String sqlStatement1 =
+                        "INSERT INTO `publication` (`title`, `publication_date`, `genre`,`publication_type`) " +
+                                "VALUES (?,?,?,?);";
+                PreparedStatement statement1 =
+                        connection.prepareStatement(sqlStatement1, Statement.RETURN_GENERATED_KEYS);
                 statement1.setString(1, title);
                 statement1.setString(2, publicationDate);
                 statement1.setString(3, genre);

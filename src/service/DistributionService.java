@@ -129,9 +129,10 @@ public class DistributionService {
             /* disable autocommit mode */
             connection.setAutoCommit(false);
             try {
-
                 /* query to insert distributor information */
-                final String sqlQuery = "INSERT INTO `distributor` (`name`, `type`, `streetAddress`, `city`,`phoneNum`, `contact`, `balanceAmount` ) VALUES (?, ?, ?, ?, ?, ?, ?);";
+                final String sqlQuery = "INSERT INTO `distributor` " +
+                        "(`name`, `type`, `streetAddress`, `city`,`phoneNum`, `contact`, `balanceAmount` ) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?);";
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setString(1, name);
                 statement.setString(2, type);
@@ -362,7 +363,9 @@ public class DistributionService {
                 case 1:
                     System.out.println("Book Editions in the database:");
                     /* query to display information from editions and publication */
-                    resultSetService.runQueryAndPrintOutput(connection, "select publication.title, editions.*  from editions NATURAL JOIN book NATURAL JOIN publication;");
+                    resultSetService.runQueryAndPrintOutput(connection,
+                            "select publication.title, editions.*  from editions NATURAL JOIN " +
+                                    "book NATURAL JOIN publication;");
 
                     /* Request user input for Book edition information */
                     System.out.println("Enter the Publication ID:");
@@ -417,7 +420,9 @@ public class DistributionService {
                         String orderStatus = delDate.compareTo(date) < 0?"COMPLETED":"IN_PROGRESS";
 
                         /* query to add order information */
-                        final String sqlQuery = "INSERT INTO `orders` (`distributorId`, `shipCost`, `orderDate`, `price`,`deliveryDate`, `status`) VALUES (?, ?, ?, ?, ?, ?);";
+                        final String sqlQuery = "INSERT INTO `orders` " +
+                                "(`distributorId`, `shipCost`, `orderDate`, `price`,`deliveryDate`, `status`) " +
+                                "VALUES (?, ?, ?, ?, ?, ?);";
 
                         PreparedStatement statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
                         statement.setInt(1, distributorId);
