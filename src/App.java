@@ -29,7 +29,8 @@ public class App {
                     System.out.println("4. Reports");
                     System.out.println("5. Staff Processing");
                     System.out.println("6. View Details");
-                    System.out.println("7. Exit\n");
+                    System.out.println("7. Payment Processing");
+                    System.out.println("8. Exit\n");
 
                     System.out.println("Enter your choice: \t");
                     int choice = scanner.nextInt();
@@ -66,17 +67,26 @@ public class App {
                             break;
 
                         case 7:
-                            System.exit(1);
+                            PaymentService paymentService = new PaymentService();
+                            paymentService.run(connection);
+                            break;
+
+                        case 8:
                             break;
 
                         default:
                             System.out.println("Invalid Input, Please try again.");
                     }
 
+                    if(choice == 8) {
+                        break;
+                    }
+
                 }
             } catch (SQLException e) {
                 System.out.println("Exception Occurred: " + e.getMessage());
             } finally {
+                System.out.println("Exiting...");
                 if(connection != null) {
                     connection.close();
                     System.out.println("Connection closed successfully");
@@ -87,5 +97,7 @@ public class App {
         }
 
     }
+
+
 
 }

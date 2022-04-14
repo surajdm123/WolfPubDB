@@ -196,6 +196,7 @@ CREATE TABLE `editions` (
 `pid` INT NOT NULL,
   `price` DOUBLE NOT NULL,
   `isbn` VARCHAR(45) NOT NULL,
+  `edition_date` DATE NOT NULL DEFAULT NOW(),
   UNIQUE(isbn),
   PRIMARY KEY (`edition_number`, `pid`),
      FOREIGN KEY (`pid`)
@@ -210,6 +211,7 @@ CREATE TABLE `chapters` (
   `edition_number` INT NOT NULL,
   `chapter_name` VARCHAR(45) NOT NULL,
   `text` VARCHAR(200) NOT NULL,
+  `chapter_date` DATE NOT NULL DEFAULT NOW(),
   PRIMARY KEY (`chapter_number`, `pid`, `edition_number`),
      FOREIGN KEY (`pid`)
      REFERENCES `editions` (`pid`)
@@ -237,7 +239,7 @@ CREATE TABLE `issues` (
 
 
 CREATE TABLE `articles` (
-  `articleId` INT NOT NULL,
+  `articleId` INT NOT NULL AUTO_INCREMENT,
   `pid` INT NOT NULL,
   `issueId` INT NOT NULL,
   `text` VARCHAR(200) NOT NULL,
@@ -293,6 +295,19 @@ REFERENCES `issues` (`pid`)
      ON UPDATE CASCADE,
      FOREIGN KEY (`issueId`)
      REFERENCES `issues` (`issueId`)
+     ON DELETE CASCADE
+     ON UPDATE CASCADE)
+;
+
+
+CREATE TABLE `transactions` (
+  `transactionId` INT NOT NULL AUTO_INCREMENT,
+  `distributorId` INT NOT NULL,
+  `amount` DOUBLE NOT NULL,
+  `transaction_date` DATE NOT NULL,
+  PRIMARY KEY (`transactionId`),
+     FOREIGN KEY (`distributorId`)
+     REFERENCES `distributor` (`distributorId`)
      ON DELETE CASCADE
      ON UPDATE CASCADE)
 ;
