@@ -1,15 +1,11 @@
 package service;
 
 import java.sql.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
-import java.util.Date;
 
 public class DistributionService {
 
@@ -152,7 +148,7 @@ public class DistributionService {
 
     public boolean updateDistributor(final Connection connection) {
 
-        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM distributor");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM orders");
         System.out.println("Enter the Distributor ID you want to update: ");
         final int distributorId = scanner.nextInt();
 
@@ -188,7 +184,7 @@ public class DistributionService {
                     case 2:
                         System.out.println("Enter the new Type:Wholesale/Bookstore/Library \t");
                         final String newType = scanner.nextLine();
-                        final String typeUpdateSqlQuery = "UPDATE distributor SET type = ? WHERE distributorId = ?;";
+                        final String typeUpdateSqlQuery = "UPDATE publication SET type = ? WHERE distributorId = ?;";
                         PreparedStatement typeUpdateStatement = connection.prepareStatement(typeUpdateSqlQuery);
                         typeUpdateStatement.setString(1, newType);
                         typeUpdateStatement.setInt(2, distributorId);
@@ -200,7 +196,7 @@ public class DistributionService {
                     case 3:
                         System.out.println("Enter the new Street Address: \t");
                         final String newAddress = scanner.nextLine();
-                        final String addressUpdateSqlQuery = "UPDATE distributor SET streetAddress = ? WHERE distributorId = ?;";
+                        final String addressUpdateSqlQuery = "UPDATE publication SET streetAddress = ? WHERE distributorId = ?;";
                         PreparedStatement addressUpdateStatement = connection.prepareStatement(addressUpdateSqlQuery);
                         addressUpdateStatement.setString(1, newAddress);
                         addressUpdateStatement.setInt(2, distributorId);
@@ -211,10 +207,10 @@ public class DistributionService {
 
                     case 4:
                         System.out.println("Enter the new City: \t");
-                        final String newCity = scanner.nextLine();
-                        final String cityUpdateSqlQuery = "UPDATE distributor SET city = ? WHERE distributorId = ?;";
+                        final int newCity = scanner.nextInt();
+                        final String cityUpdateSqlQuery = "UPDATE book SET city = ? WHERE distributorId = ?;";
                         PreparedStatement cityUpdateStatement = connection.prepareStatement(cityUpdateSqlQuery);
-                        cityUpdateStatement.setString(1, newCity);
+                        cityUpdateStatement.setInt(1, newCity);
                         cityUpdateStatement.setInt(2, distributorId);
                         updatedRows = cityUpdateStatement.executeUpdate();
                         connection.commit();
@@ -223,10 +219,10 @@ public class DistributionService {
 
                     case 5:
                         System.out.println("Enter the Phone Number: \t");
-                        final String newPhone = scanner.nextLine();
-                        final String phoneUpdateSqlQuery = "UPDATE distributor SET phoneNum = ? WHERE distributorId = ?;";
+                        final int newPhone = scanner.nextInt();
+                        final String phoneUpdateSqlQuery = "UPDATE book SET phoneNum = ? WHERE distributorId = ?;";
                         PreparedStatement phoneUpdateStatement = connection.prepareStatement(phoneUpdateSqlQuery);
-                        phoneUpdateStatement.setString(1, newPhone);
+                        phoneUpdateStatement.setInt(1, newPhone);
                         phoneUpdateStatement.setInt(2, distributorId);
                         updatedRows = phoneUpdateStatement.executeUpdate();
                         connection.commit();
@@ -235,10 +231,10 @@ public class DistributionService {
 
                     case 6:
                         System.out.println("Enter the new Contact: \t");
-                        final String newContact = scanner.nextLine();
-                        final String contactUpdateSqlQuery = "UPDATE distributor SET contact = ? WHERE distributorId = ?;";
+                        final int newContact = scanner.nextInt();
+                        final String contactUpdateSqlQuery = "UPDATE book SET contact = ? WHERE distributorId = ?;";
                         PreparedStatement contactUpdateStatement = connection.prepareStatement(contactUpdateSqlQuery);
-                        contactUpdateStatement.setString(1, newContact);
+                        contactUpdateStatement.setInt(1, newContact);
                         contactUpdateStatement.setInt(2, distributorId);
                         updatedRows = contactUpdateStatement.executeUpdate();
                         connection.commit();
@@ -307,7 +303,7 @@ public class DistributionService {
         return true;
     }
 
-    public boolean placeNewOrder(final Connection connection) throws ParseException {
+    public boolean placeNewOrder(final Connection connection) {
 
         try {
             System.out.println("Distributors in the database:");
@@ -324,9 +320,8 @@ public class DistributionService {
             final int choice = scanner.nextInt();
 
             LocalDate todayObj = LocalDate.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
             String today = todayObj.format(formatter);
-
 
 
             switch (choice) {
@@ -337,10 +332,8 @@ public class DistributionService {
                     System.out.println("Enter the Publication ID:");
                     final int pid = scanner.nextInt();
 
-                    scanner.nextLine();
-
                     System.out.println("Enter the Edition Number:");
-                    final String editionNumber = scanner.nextLine();
+                    final int editionNumber = scanner.nextInt();
 
                     System.out.println("Enter the number of copies:");
                     final int numberOfCopies = scanner.nextInt();
@@ -348,7 +341,7 @@ public class DistributionService {
                     final String bookEditionPriceQuery = "SELECT price FROM editions where pid=? AND edition_number = ?;";
                     PreparedStatement bookEditionPriceStatement = connection.prepareStatement(bookEditionPriceQuery);
                     bookEditionPriceStatement.setInt(1, pid);
-                    bookEditionPriceStatement.setString(2, editionNumber);
+                    bookEditionPriceStatement.setInt(2, editionNumber);
                     final ResultSet bookResultSet = bookEditionPriceStatement.executeQuery();
 
                     double price = 0;
@@ -362,9 +355,6 @@ public class DistributionService {
                     System.out.println("Enter the Shipping Cost:");
                     final double shippingCost = scanner.nextDouble();
                     scanner.nextLine();
-
-                    System.out.println("Enter the order date (yyyy-mm-dd): ");
-                    final String orderDate = scanner.nextLine();
                     System.out.println("Enter the delivery date (yyyy-mm-dd): ");
                     final String deliveryDate = scanner.nextLine();
 
@@ -372,27 +362,16 @@ public class DistributionService {
 
                     try {
 
-                        Date ordDate = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(orderDate);
-                        Date delDate = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(deliveryDate);
-
-                        if (ordDate.compareTo(delDate) > 0) {
-                            System.out.println("Could not place new order, order date cannot be later than delivery date");
-                            throw new SQLException();
-                        }
-                        Date date = new Date();
-                        String orderStatus = delDate.compareTo(date) < 0?"COMPLETED":"IN_PROGRESS";
-
                         final String sqlQuery = "INSERT INTO `orders` (`distributorId`, `shipCost`, `orderDate`, `price`,`deliveryDate`, `status`) VALUES (?, ?, ?, ?, ?, ?);";
-
                         PreparedStatement statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
                         statement.setInt(1, distributorId);
                         statement.setDouble(2, shippingCost);
 
-                        statement.setString(3, orderDate);
+                        statement.setString(3, today);
                         statement.setDouble(4, price*numberOfCopies);
 
                         statement.setString(5, deliveryDate);
-                        statement.setString(6, orderStatus);
+                        statement.setString(6, "IN_PROGRESS");
                         statement.executeUpdate();
 
                         ResultSet rs = statement.getGeneratedKeys();
@@ -405,13 +384,11 @@ public class DistributionService {
                             throw new SQLException("Could not insert into table orders");
                         }
 
-
-
                         final String includesSqlQuery = "INSERT INTO `includes` (`orderId`, `pid`, `edition_number`, `number_of_copies`) VALUES (?, ?, ?, ?);";
                         PreparedStatement includesStatement = connection.prepareStatement(includesSqlQuery);
                         includesStatement.setInt(1, orderId);
                         includesStatement.setInt(2, pid);
-                        includesStatement.setString(3, editionNumber);
+                        includesStatement.setInt(3, editionNumber);
                         includesStatement.setInt(4, numberOfCopies);
                         includesStatement.executeUpdate();
 
@@ -437,13 +414,12 @@ public class DistributionService {
                         updateBalanceAmountStatement.setInt(2, distributorId);
                         updateBalanceAmountStatement.executeUpdate();
 
-
                         connection.commit();
 
                         System.out.println("Order Successfully placed and the details are as follows:");
                         System.out.println("Order Id: " + orderId);
                         System.out.println("Total Price: " + totalPrice);
-                        System.out.println("Order Placed On: " + orderDate);
+                        System.out.println("Order Placed On: " + today);
                         System.out.println("Delivered On: " + deliveryDate);
 
                     } catch (SQLException e) {
@@ -455,7 +431,7 @@ public class DistributionService {
                     break;
                 case 2:
                     System.out.println("Issues in the database:");
-                    resultSetService.runQueryAndPrintOutput(connection, "select publication.title, issues.*, periodic_publication.periodicty from issues NATURAL JOIN periodic_publication NATURAL JOIN publication;");
+                    resultSetService.runQueryAndPrintOutput(connection, "select publication.title, issues.*, periodic_publication.periodicity from issues NATURAL JOIN periodic_publication NATURAL JOIN publication;");
 
                     System.out.println("Enter the Publication ID:");
                     final int pid2 = scanner.nextInt();
@@ -483,26 +459,12 @@ public class DistributionService {
                     System.out.println("Enter the Shipping Cost:");
                     final double shippingCost2 = scanner.nextDouble();
                     scanner.nextLine();
-
-                    System.out.println("Enter the order date (yyyy-mm-dd): ");
-                    final String ordDate = scanner.nextLine();
                     System.out.println("Enter the delivery date (yyyy-mm-dd): ");
                     final String deliveryDate2 = scanner.nextLine();
 
                     connection.setAutoCommit(false);
 
                     try {
-
-                        Date ordDate2 = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(ordDate);
-                        Date delDate2 = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(deliveryDate2);
-
-                        if (ordDate2.compareTo(delDate2) > 0) {
-                            System.out.println("Could not place new order, order date cannot be later than delivery date");
-                            throw new SQLException();
-                        }
-                        Date date = new Date();
-                        String orderStatus = delDate2.compareTo(date) < 0?"COMPLETED":"IN_PROGRESS";
-
 
                         final String sqlQuery = "INSERT INTO `orders` (`distributorId`, `shipCost`, `orderDate`, `price`,`deliveryDate`, `status`) VALUES (?, ?, ?, ?, ?, ?);";
                         PreparedStatement statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
@@ -581,7 +543,7 @@ public class DistributionService {
         System.out.println("Enter the Billing Staff ID:");
         final int sid = scanner.nextInt();
 
-        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from distributor;");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from distributor where title = 'Billing Staff';");
         System.out.println("Enter the distributor ID:");
         final int distributorId = scanner.nextInt();
 
@@ -632,7 +594,6 @@ public class DistributionService {
 
     public boolean updateDistributorOutstandingBalance(final Connection connection) {
 
-        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from distributor;");
         System.out.println("Enter the Distributor ID you want to update: ");
         final int distributorId = scanner.nextInt();
 
@@ -651,6 +612,7 @@ public class DistributionService {
 
                 switch (choice) {
                     case 1:
+                        resultSetService.runQueryAndPrintOutput(connection, "Select * from distributor;");
                         System.out.println("Enter the new Total Balance: \t");
                         final String newBalance = scanner.nextLine();
                         final String balanceUpdateSqlQuery = "UPDATE distributor SET balanceAmount = ? WHERE distributorId = ?;";
