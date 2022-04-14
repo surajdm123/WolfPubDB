@@ -687,6 +687,9 @@ public class DistributionService {
 
             System.out.println("Bill generated and sent to the client.");
 
+            System.out.println("Bills in the database:");
+            resultSetService.runQueryAndPrintOutput(connection, "select * from bills;");
+
         } catch (Exception e) {
             System.out.println("Exception Occurred: " + e.getMessage());
         }
