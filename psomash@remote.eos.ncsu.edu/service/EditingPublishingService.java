@@ -64,7 +64,6 @@ public class EditingPublishingService {
                         break;
                     case 9:
                         assignEditorToPublication(connection);
-                        break;
                     case 10:
                         getAllPublicationsAssignedToEditor(connection);
                         break;
@@ -169,7 +168,7 @@ public class EditingPublishingService {
         final int publicationId = scanner.nextInt();
 
         System.out.println("Enter the edition number: ");
-        final String editionNumber = scanner.nextLine();
+        final int editionNumber = scanner.nextInt();
 
         scanner.nextLine();
         System.out.println("Enter the chapter name: ");
@@ -185,7 +184,7 @@ public class EditingPublishingService {
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setInt(1, chapterNumber);
                 statement.setInt(2, publicationId);
-                statement.setString(3, editionNumber);
+                statement.setInt(3, editionNumber);
                 statement.setString(4, chapterName);
                 statement.setString(5, chapterText);
 
@@ -237,7 +236,7 @@ public class EditingPublishingService {
                 statement.setInt(2, issueId);
                 statement.setString(3, articleText);
                 statement.setString(4, articleDate);
-                statement.setString(5, articleName);
+                statement.setString(4, articleName);
 
                 statement.executeUpdate();
 
@@ -316,10 +315,8 @@ public class EditingPublishingService {
         System.out.println("Enter the publication ID: ");
         final int publicationId = scanner.nextInt();
 
-        scanner.nextLine();
-
         System.out.println("Enter the edition number: ");
-        final String editionNumber = scanner.nextLine();
+        final int editionNumber = scanner.nextInt();
 
         try {
             connection.setAutoCommit(false);
@@ -330,7 +327,7 @@ public class EditingPublishingService {
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setInt(1, chapterNumber);
                 statement.setInt(2,publicationId);
-                statement.setString(3, editionNumber);
+                statement.setInt(3, editionNumber);
 
                 int updatedRows = statement.executeUpdate();
                 connection.commit();
@@ -512,10 +509,6 @@ public class EditingPublishingService {
         final String publicationType = MYSQL_CONSTANTS.BOOK;
         System.out.println("Enter Number of Pages: ");
         final int numberOfPages = scanner.nextInt();
-
-        System.out.println("Authors in the database:");
-        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM staff where title='Author'");
-
         System.out.println("Enter Author Id:");
         final int authorId = scanner.nextInt();
 
