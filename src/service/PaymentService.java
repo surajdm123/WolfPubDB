@@ -59,7 +59,7 @@ public class PaymentService {
 
                 scanner.nextLine();
 
-                System.out.println("Enter the Transaction Date:");
+                System.out.println("Enter the Transaction Date(yyyy-mm-dd):");
                 final String date = scanner.nextLine();
 
                 final String sqlQuery = "INSERT INTO `transactions` (`distributorId`, `amount`, `transaction_date`) VALUES (?, ?, ?);";

@@ -196,6 +196,7 @@ CREATE TABLE `editions` (
 `pid` INT NOT NULL,
   `price` DOUBLE NOT NULL,
   `isbn` VARCHAR(45) NOT NULL,
+  `edition_date` DATE NOT NULL DEFAULT NOW(),
   UNIQUE(isbn),
   PRIMARY KEY (`edition_number`, `pid`),
      FOREIGN KEY (`pid`)
@@ -210,6 +211,7 @@ CREATE TABLE `chapters` (
   `edition_number` INT NOT NULL,
   `chapter_name` VARCHAR(45) NOT NULL,
   `text` VARCHAR(200) NOT NULL,
+  `chapter_date` DATE NOT NULL DEFAULT NOW(),
   PRIMARY KEY (`chapter_number`, `pid`, `edition_number`),
      FOREIGN KEY (`pid`)
      REFERENCES `editions` (`pid`)
