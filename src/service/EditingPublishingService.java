@@ -525,6 +525,7 @@ public class EditingPublishingService {
 
     public boolean insertNewBookPublication(final Connection connection) {
 
+        // Get book publication details from the user
         System.out.println("Enter Publication Title: ");
         final String title = scanner.nextLine();
         System.out.println("Enter Publication Date (yyyy-mm-dd): ");
@@ -543,7 +544,7 @@ public class EditingPublishingService {
         final int authorId = scanner.nextInt();
 
         try {
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(false); // Set auto commit property of the connection to false
             try {
                 // insert publication details including title, publication date, genre, publication type into publication table.
                 String sqlStatement1 = "INSERT INTO `publication` (`title`, `publication_date`, `genre`,`publication_type`) VALUES (?,?,?,?);";
@@ -555,10 +556,12 @@ public class EditingPublishingService {
 
                 statement1.executeUpdate();
 
+                // Get the resultset
                 ResultSet rs = statement1.getGeneratedKeys();
 
                 int pid = -1;
 
+                // Get the auto incremented pid from the publication table
                 if (rs.next()) {
                     pid = rs.getInt(1);
                 } else {
@@ -579,20 +582,22 @@ public class EditingPublishingService {
                 statement3.setInt(2, pid);
                 statement3.executeUpdate();
 
+                // Commit the transaction
                 connection.commit();
                 System.out.println("Book Publication successfully inserted (pid=" + pid + ").\n\n");
-                connection.setAutoCommit(true);
+                connection.setAutoCommit(true); // Set auto commit property to true
 
             } catch (Exception e) {
+                // Rollback the transaction if there is an exception
                 connection.rollback();
                 System.out.println("Exception Occurred: " + e.getMessage());
                 return false;
             }
         } catch (Exception e) {
+            // Displays the error message if there is an exception
             System.out.println("Exception Occurred: " + e.getMessage());
             return false;
         }
-
         return true;
     }
 
