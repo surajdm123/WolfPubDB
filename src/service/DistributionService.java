@@ -414,6 +414,7 @@ public class DistributionService {
                         updateBalanceAmountStatement.setInt(2, distributorId);
                         updateBalanceAmountStatement.executeUpdate();
 
+
                         connection.commit();
 
                         System.out.println("Order Successfully placed and the details are as follows:");
