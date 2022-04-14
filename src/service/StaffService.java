@@ -212,6 +212,11 @@ public class StaffService {
                         System.out.println("Enter the person's salary/toPay amount: \t");
                         double toPay = scanner.nextDouble();
 
+                        scanner.nextLine();
+
+                        System.out.println("Enter the pay-due/paycheck date (yyyy-mm-dd):");
+                        final String date = scanner.nextLine();
+
 
                         statement1.setString(7, title);
                         statement1.executeUpdate();
@@ -223,11 +228,12 @@ public class StaffService {
                             throw new SQLException("Could not insert into table staff");
                         }
 
-                        final String editorQuery = "INSERT INTO `editor` (`sid`, `isInvited`, `toPay`) VALUES (?,?,?);";
+                        final String editorQuery = "INSERT INTO `editor` (`sid`, `isInvited`, `toPay`, `payDueDate`) VALUES (?,?,?,?);";
                         final PreparedStatement editorStatement = connection.prepareStatement(editorQuery);
                         editorStatement.setInt(1, sid);
                         editorStatement.setInt(2, isInvited);
                         editorStatement.setDouble(3, toPay);
+                        editorStatement.setString(4, date);
                         editorStatement.executeUpdate();
                         connection.commit();
                         System.out.println("Successfully Inserted new staff member with sid=" + sid);
@@ -255,6 +261,9 @@ public class StaffService {
                         System.out.println("Enter the person's salary/toPay amount: \t");
                         double toPay2 = scanner.nextDouble();
 
+                        System.out.println("Enter the pay-due/paycheck date (yyyy-mm-dd):");
+                        final String date2 = scanner.nextLine();
+
 
                         statement1.setString(7, title);
                         statement1.executeUpdate();
@@ -266,11 +275,12 @@ public class StaffService {
                             throw new SQLException("Could not insert into table staff");
                         }
 
-                        final String authorQuery = "INSERT INTO `author` (`sid`, `isInvited`, `toPay`) VALUES (?,?,?);";
+                        final String authorQuery = "INSERT INTO `author` (`sid`, `isInvited`, `toPay`, `payDueDate`) VALUES (?,?,?,?);";
                         final PreparedStatement authorStatement = connection.prepareStatement(authorQuery);
                         authorStatement.setInt(1, sid);
                         authorStatement.setInt(2, isInvited2);
                         authorStatement.setDouble(3, toPay2);
+                        authorStatement.setString(4, date2);
                         authorStatement.executeUpdate();
                         connection.commit();
                         System.out.println("Successfully Inserted new staff member with sid=" + sid);
