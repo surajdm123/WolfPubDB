@@ -630,6 +630,10 @@ public class EditingPublishingService {
         final String publicationType = scanner.nextLine();
         System.out.println("Enter Periodicity (Weekly, Monthly, Daily): ");
         final String periodicity = scanner.nextLine();
+
+        System.out.println("Authors in the database");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT sid, name from staff where title='Author';");
+
         System.out.println("Enter Author Id:");
         final int authorId = scanner.nextInt();
 
