@@ -192,7 +192,7 @@ CREATE TABLE `periodic_publication` (
 ;
 
 CREATE TABLE `editions` (
-    `edition_number` INT NOT NULL,
+    `edition_number` VARCHAR(20) NOT NULL,
     `pid` INT NOT NULL,
     `price` DOUBLE NOT NULL,
     `isbn` VARCHAR(45) NOT NULL,
@@ -208,7 +208,7 @@ CREATE TABLE `editions` (
 CREATE TABLE `chapters` (
   `chapter_number` INT NOT NULL,
   `pid` INT NOT NULL,
-  `edition_number` INT NOT NULL,
+  `edition_number` VARCHAR(20) NOT NULL,
   `chapter_name` VARCHAR(45) NOT NULL,
   `text` VARCHAR(200) NOT NULL,
   `chapter_date` DATE NOT NULL DEFAULT "2022-04-18",
@@ -260,7 +260,7 @@ ON DELETE CASCADE
 CREATE TABLE  `includes` (
   `orderId` INT NOT NULL,
   `pid` INT NOT NULL,
-  `edition_number` INT NOT NULL,
+  `edition_number` VARCHAR(20) NOT NULL,
   `number_of_copies` INT NOT NULL,
   PRIMARY KEY (`orderId`, `pid`, `edition_number`),
      FOREIGN KEY (`pid`)

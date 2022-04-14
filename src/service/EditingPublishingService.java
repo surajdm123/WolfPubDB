@@ -167,8 +167,10 @@ public class EditingPublishingService {
         System.out.println("Enter the publication ID: ");
         final int publicationId = scanner.nextInt();
 
+        scanner.nextLine();
+
         System.out.println("Enter the edition number: ");
-        final int editionNumber = scanner.nextInt();
+        final String editionNumber = scanner.nextLine();
 
         scanner.nextLine();
         System.out.println("Enter the chapter name: ");
@@ -184,7 +186,7 @@ public class EditingPublishingService {
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setInt(1, chapterNumber);
                 statement.setInt(2, publicationId);
-                statement.setInt(3, editionNumber);
+                statement.setString(3, editionNumber);
                 statement.setString(4, chapterName);
                 statement.setString(5, chapterText);
 
@@ -315,8 +317,10 @@ public class EditingPublishingService {
         System.out.println("Enter the publication ID: ");
         final int publicationId = scanner.nextInt();
 
+        scanner.nextLine();
+
         System.out.println("Enter the edition number: ");
-        final int editionNumber = scanner.nextInt();
+        final String editionNumber = scanner.nextLine();
 
         try {
             connection.setAutoCommit(false);
@@ -327,7 +331,7 @@ public class EditingPublishingService {
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setInt(1, chapterNumber);
                 statement.setInt(2,publicationId);
-                statement.setInt(3, editionNumber);
+                statement.setString(3, editionNumber);
 
                 int updatedRows = statement.executeUpdate();
                 connection.commit();
