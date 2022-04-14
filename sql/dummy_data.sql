@@ -29,3 +29,6 @@ INSERT INTO `includes` (`orderId`, `pid`, `edition_number`, `number_of_copies`) 
 INSERT INTO `consists` (`orderId`, `pid`, `issueId`, `number_of_copies`) VALUES (4003,1003,1,10);
 
 INSERT INTO `staff` (`sid`, `name`, `dob`, `address`, `phone`, `emailID`, `hireDate`, `title`) VALUES ('3000', 'Muniyappa', '1996-09-11', '3232 ABC St, NC 27606', '9195552367', '3000@gmail.com', '2020-04-01', 'Billing Staff');
+INSERT INTO `sdevath`.`bill_staff` (`sid`, `counter_number`) VALUES ('3000', '1');
+
+
