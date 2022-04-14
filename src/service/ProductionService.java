@@ -140,11 +140,15 @@ public class ProductionService {
         System.out.println("Enter the publication ID of the book for which you want to add an edition: ");
         final int pubID = scanner.nextInt();
 
+        scanner.nextLine();
+
         System.out.println("Enter the edition number: ");
-        final int edNum = scanner.nextInt();
+        final String edNum = scanner.nextLine();
 
         System.out.println("Enter the price of the new edition: ");
         final double price = scanner.nextDouble();
+
+        scanner.nextLine();
 
         System.out.println("Enter the ISBN of the new edition: ");
         final String isbn = scanner.nextLine();
@@ -154,7 +158,7 @@ public class ProductionService {
             try {
                 final String sqlQuery = "INSERT INTO `editions` (`edition_number`, `pid`, `price`, `isbn`) VALUES (?, ?, ?, ?);";
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
-                statement.setInt(1, edNum);
+                statement.setString(1, edNum);
                 statement.setInt(2, pubID);
                 statement.setDouble(3, price);
                 statement.setString(4, isbn);
@@ -185,7 +189,7 @@ public class ProductionService {
         resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM editions;");
 
         System.out.println("Enter the edition number you want to update: ");
-        final int eNum = scanner.nextInt();
+        final String eNum = scanner.nextLine();
 
         System.out.println("Enter the publication ID of the above edition: ");
         final int pid = scanner.nextInt();
@@ -213,7 +217,7 @@ public class ProductionService {
                         final String priceUpdateSqlQuery = "UPDATE editions SET price = ? WHERE (`edition_number` = ?) AND (`pid` = ?);";
                         PreparedStatement priceUpdateStatement = connection.prepareStatement(priceUpdateSqlQuery);
                         priceUpdateStatement.setDouble(1, newPrice);
-                        priceUpdateStatement.setInt(2, eNum);
+                        priceUpdateStatement.setString(2, eNum);
                         priceUpdateStatement.setInt(3, pid);
 
                         updatedRows = priceUpdateStatement.executeUpdate();
@@ -229,7 +233,7 @@ public class ProductionService {
                         final String isbnUpdateSqlQuery = "UPDATE editions SET isbn = ? WHERE (`edition_number` = ?) AND (`pid` = ?);";
                         PreparedStatement isbnUpdateStatement = connection.prepareStatement(isbnUpdateSqlQuery);
                         isbnUpdateStatement.setString(1, newISBN);
-                        isbnUpdateStatement.setInt(2, eNum);
+                        isbnUpdateStatement.setString(2, eNum);
                         isbnUpdateStatement.setInt(3, pid);
 
                         updatedRows = isbnUpdateStatement.executeUpdate();
@@ -267,7 +271,7 @@ public class ProductionService {
         System.out.println("\nEnter the following details to delete an edition.\n");
 
         System.out.println("Enter the Edition Number: ");
-        final int editionNumber = scanner.nextInt();
+        final String editionNumber = scanner.nextLine();
 
         System.out.println("Enter the publication ID: ");
         final int publicationId = scanner.nextInt();
@@ -279,7 +283,7 @@ public class ProductionService {
 
                 final String sqlQuery = "DELETE FROM `editions` WHERE (`edition_number` = ?) and (`pid` = ?);";
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
-                statement.setInt(1, editionNumber);
+                statement.setString(1, editionNumber);
                 statement.setInt(2,publicationId);
 
                 int updatedRows = statement.executeUpdate();
@@ -322,6 +326,8 @@ public class ProductionService {
 
         System.out.println("Enter the price of the new issue: ");
         final double issuePrice = scanner.nextDouble();
+
+        scanner.nextLine();
 
         System.out.println("Enter the title of the new issue: ");
         final String issueTitle = scanner.nextLine();
@@ -515,11 +521,15 @@ public class ProductionService {
         System.out.println("Enter the publication ID of the book for which you want to add a chapter: ");
         final int pubID = scanner.nextInt();
 
+        scanner.nextLine();
+
         System.out.println("Enter the edition number of the above book for which you want to add a chapter: ");
-        final int edNum = scanner.nextInt();
+        final String edNum = scanner.nextLine();
 
         System.out.println("Enter the chapter number: ");
         final int chapNum = scanner.nextInt();
+
+        scanner.nextLine();
 
         System.out.println("Enter the chapter name: ");
         final String chapName = scanner.nextLine();
@@ -534,7 +544,7 @@ public class ProductionService {
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setInt(1, chapNum);
                 statement.setInt(2, pubID);
-                statement.setInt(3, edNum);
+                statement.setString(3, edNum);
                 statement.setString(4, chapName);
                 statement.setString(5, chapText);
 
@@ -569,8 +579,10 @@ public class ProductionService {
         System.out.println("Enter the publication ID of the above chapter: ");
         final int pid = scanner.nextInt();
 
+        scanner.nextLine();
+
         System.out.println("Enter the edition number of the above chapter: ");
-        final int edNum = scanner.nextInt();
+        final String edNum = scanner.nextLine();
 
         System.out.println("What would you like to update for the above selected chapter?");
         System.out.println("1. Chapter Name");
@@ -597,7 +609,7 @@ public class ProductionService {
                         nameUpdateStatement.setString(1, newName);
                         nameUpdateStatement.setInt(2, chapNum);
                         nameUpdateStatement.setInt(3, pid);
-                        nameUpdateStatement.setInt(4, edNum);
+                        nameUpdateStatement.setString(4, edNum);
 
                         updatedRows = nameUpdateStatement.executeUpdate();
                         connection.commit();
@@ -614,7 +626,7 @@ public class ProductionService {
                         textUpdateStatement.setString(1, newText);
                         textUpdateStatement.setInt(2, chapNum);
                         textUpdateStatement.setInt(3, pid);
-                        textUpdateStatement.setInt(4, edNum);
+                        textUpdateStatement.setString(4, edNum);
 
                         updatedRows = textUpdateStatement.executeUpdate();
                         connection.commit();
@@ -653,6 +665,8 @@ public class ProductionService {
 
         System.out.println("Enter the publication ID of the above issue: ");
         final int pubID = scanner.nextInt();
+
+        scanner.nextLine();
 
         System.out.println("Enter the name of the new article: ");
         final String articleName = scanner.nextLine();
