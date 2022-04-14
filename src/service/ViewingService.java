@@ -2,6 +2,7 @@ package service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -31,7 +32,39 @@ public class ViewingService {
                         viewStaffMembers(connection);
                         break;
                     case 2:
-                        resultSetService.runQueryAndPrintOutput(connection, "SELECT orders.*, distributor.name as 'Distributor Name', distributor.type as 'Distributor Type' FROM orders NATURAL JOIN distributor;");
+                        System.out.println("1. All Orders");
+                        System.out.println("2. Order Details by ID\n");
+                        System.out.println("3. Return to Previous Menu");
+                        System.out.println("Enter your choice:\t");
+
+                        int choice2 = scanner.nextInt();
+
+                        switch (choice2) {
+                            case 1:
+                                resultSetService.runQueryAndPrintOutputRowFormat(connection, "SELECT orders.*,(orders.shipCost + orders.price) AS 'Total Order Amount',distributor.name AS 'Distributor Name', distributor.type AS 'Distributor Type', publication.publication_type, COALESCE(includes.number_of_copies, consists.number_of_copies) AS 'Number of Copies', COALESCE(includes.pid, consists.pid) AS 'Publication Id', COALESCE(includes.edition_number, consists.issueId) AS 'Edition/Issue', publication.title FROM orders NATURAL JOIN distributor LEFT OUTER JOIN includes ON includes.orderId = orders.orderId LEFT OUTER JOIN consists ON consists.orderId = orders.orderId LEFT OUTER JOIN publication ON (consists.pid = publication.pid OR includes.pid = publication.pid);");
+                                break;
+                            case 2:
+                                try {
+                                    System.out.println("Enter the OrderId:");
+                                    final int orderId = scanner.nextInt();
+                                    final String sqlQuery = "SELECT orders.*,(orders.shipCost + orders.price) AS 'Total Order Amount',distributor.name AS 'Distributor Name', distributor.type AS 'Distributor Type', publication.publication_type, COALESCE(includes.number_of_copies, consists.number_of_copies) AS 'Number of Copies', COALESCE(includes.pid, consists.pid) AS 'Publication Id', COALESCE(includes.edition_number, consists.issueId) AS 'Edition/Issue', publication.title FROM orders NATURAL JOIN distributor LEFT OUTER JOIN includes ON includes.orderId = orders.orderId LEFT OUTER JOIN consists ON consists.orderId = orders.orderId LEFT OUTER JOIN publication ON (consists.pid = publication.pid OR includes.pid = publication.pid) WHERE orders.orderId = ?;";
+                                    PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                                    statement.setInt(1, orderId);
+                                    ResultSet resultSet = statement.executeQuery();
+                                    resultSetService.viewFromResultSet(resultSet);
+                                }  catch (Exception e) {
+                                    System.out.println("Exception Occurred: " + e.getMessage());
+                                }
+
+                                break;
+                            case 3:
+                                return;
+                            default:
+                                System.out.println("Incorrect input. Please try again.");
+
+                        }
+
+
                         break;
                     case 3:
                         resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM distributor;");
