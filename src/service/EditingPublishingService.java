@@ -759,7 +759,7 @@ public class EditingPublishingService {
                         System.out.println("Enter the new Periodicity (Daily, Weekly, Monthly): \t");
                         final String periodicity = scanner.nextLine();
                         //Update the periodicity of the periodic publication for a specific publication id.
-                        final String periodicityUpdateSqlQuery = "UPDATE periodic_publication SET periodicity = ? WHERE pid = ?;";
+                        final String periodicityUpdateSqlQuery = "UPDATE periodic_publication SET periodicty = ? WHERE pid = ?;";
                         PreparedStatement periodicityUpdateStatement = connection.prepareStatement(periodicityUpdateSqlQuery);
                         periodicityUpdateStatement.setString(1, periodicity);
                         periodicityUpdateStatement.setInt(2, pid);
