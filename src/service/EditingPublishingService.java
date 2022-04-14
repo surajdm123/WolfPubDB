@@ -341,7 +341,7 @@ public class EditingPublishingService {
             connection.setAutoCommit(false);
 
             try {
-                //Delete a specific chapter with a chapter name, publication if and edition number.
+                //Delete a specific chapter with a chapter name, publication id and edition number.
                 final String sqlQuery = "DELETE FROM `chapters` WHERE (`chapter_number` = ?) and (`pid` = ?) and (`edition_number` = ?);";
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setInt(1, chapterNumber);
