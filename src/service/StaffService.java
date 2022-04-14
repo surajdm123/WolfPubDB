@@ -3,15 +3,18 @@ package service;
 import java.sql.*;
 import java.util.Scanner;
 
+//Class definition for Staff Service
 public class StaffService {
 
     Scanner scanner = new Scanner(System.in);
     ResultSetService resultSetService = new ResultSetService();
 
+    //Function to ensure run functionality is handled
     public void run(final Connection connection) {
         try {
 
             while (true) {
+                //Choice of option to perform functions for the service
                 System.out.println("Choose from the following:");
                 System.out.println("1. Insert a new Staff member");
                 System.out.println("2. Delete a Staff member");
@@ -39,6 +42,7 @@ public class StaffService {
         }
     }
 
+    //Function to get choice entry
     private int getChoice() {
         System.out.println("Which role is the staff member in?");
         System.out.println("1. Admin");
@@ -55,14 +59,17 @@ public class StaffService {
         return choice;
     }
 
+    //Function to delete a staff menber entry from the database
     public void deleteStaffMember(final Connection connection) {
         System.out.println("Staff members present in the database:");
+        //Display existing staff details
         resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM staff;");
 
         System.out.println("Enter the sid of the staff member you want to delete:");
         final int sid = scanner.nextInt();
 
         try {
+            //Delete a specific staff based on staff id
             final String sqlQuery = "DELETE FROM `staff` WHERE (`sid` = ?)";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setInt(1, sid);
@@ -79,6 +86,7 @@ public class StaffService {
         }
     }
 
+    //function to insert a New Staff details into the DB.
     public void insertNewStaffMember(final Connection connection) {
 
 
@@ -112,6 +120,7 @@ public class StaffService {
             try {
                 connection.setAutoCommit(false);
 
+                //SQL query to insert name, dob, address, phone, emailId, hireDate, title into staff table.
                 final String staffAdminQuery = "INSERT INTO `staff` (`name`, `dob`, `address`, `phone`, `emailID`, `hireDate`, `title`) VALUES (?,?,?,?,?,?,?);";
                 PreparedStatement statement1 = connection.prepareStatement(staffAdminQuery, Statement.RETURN_GENERATED_KEYS);
                 statement1.setString(1, name);
@@ -139,6 +148,7 @@ public class StaffService {
                             throw new SQLException("Could not insert into table staff");
                         }
 
+                        //SQL query to insert admin details: ssn, sid into admin table
                         final String adminQuery = "INSERT INTO `admin` (`ssn`, `sid`) VALUES (?,?);";
                         final PreparedStatement statement2 = connection.prepareStatement(adminQuery);
                         statement2.setString(1, ssn);
@@ -162,6 +172,7 @@ public class StaffService {
                             throw new SQLException("Could not insert into table staff");
                         }
 
+                        //Query to enter staff id and counter number for the billing staff
                         final String billQuery = "INSERT INTO `bill_staff` (`sid`, `counter_number`) VALUES (?,?);";
                         final PreparedStatement billStaffStatement = connection.prepareStatement(billQuery);
                         billStaffStatement.setInt(1, sid);
@@ -185,6 +196,7 @@ public class StaffService {
                             throw new SQLException("Could not insert into table staff");
                         }
 
+                        //SQL query to inser staff id and grade into management table.
                         final String managementQuery = "INSERT INTO `management` (`sid`, `grade`) VALUES (?,?);";
                         final PreparedStatement managementStatement = connection.prepareStatement(managementQuery);
                         managementStatement.setInt(1, sid);
@@ -231,7 +243,7 @@ public class StaffService {
                         } else {
                             throw new SQLException("Could not insert into table staff");
                         }
-
+                        //Insert staff id, isInvited, toPay, payDue,Date details into editor table.
                         final String editorQuery = "INSERT INTO `editor` (`sid`, `isInvited`, `toPay`, `payDueDate`) VALUES (?,?,?,?);";
                         final PreparedStatement editorStatement = connection.prepareStatement(editorQuery);
                         editorStatement.setInt(1, sid);
@@ -281,6 +293,7 @@ public class StaffService {
                             throw new SQLException("Could not insert into table staff");
                         }
 
+                        //SQL query to insert staff if, isInvited, toPay, payDueDate into author table
                         final String authorQuery = "INSERT INTO `author` (`sid`, `isInvited`, `toPay`, `payDueDate`) VALUES (?,?,?,?);";
                         final PreparedStatement authorStatement = connection.prepareStatement(authorQuery);
                         authorStatement.setInt(1, sid);

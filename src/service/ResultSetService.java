@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+//Class definition for Results Service
 public class ResultSetService {
 
     private List<String> getHeaderColumns(final ResultSet resultSet) throws SQLException {
@@ -16,11 +17,13 @@ public class ResultSetService {
         return headerColumns;
     }
 
+    //Function to view From Result set
     public void viewFromResultSet(ResultSet resultSet) {
         try {
             List<String> headerColumns = getHeaderColumns(resultSet);
 
             if (!resultSet.isBeforeFirst() ) {
+                //If there is no data found, print an informative message
                 System.out.println("-----------------");
                 System.out.println("NO DATA");
                 System.out.println("-----------------");
@@ -36,11 +39,12 @@ public class ResultSetService {
             }
 
         } catch (Exception e) {
-            System.out.println("Exception occured: " + e.getMessage());
+            System.out.println("Exception occurred: " + e.getMessage());
             return;
         }
     }
 
+    //Function to run Query and Print the output
     public void runQueryAndPrintOutput(final Connection connection, final String sqlQuery) {
 
         try {
@@ -80,6 +84,7 @@ public class ResultSetService {
 
     }
 
+    //Function to run Query and Print output in row format
     public void runQueryAndPrintOutputRowFormat(final Connection connection, final String sqlQuery) {
         try {
             Statement statement = connection.createStatement();
