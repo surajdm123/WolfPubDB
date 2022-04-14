@@ -68,6 +68,7 @@ public class ReportsService {
                         break;
                     case 9:
                         getEditorPaymentPerTimePeriod(connection);
+                        break;
                     case 10:
                         getAuthorPaymentPerWorkType(connection);
                         break;
@@ -184,7 +185,7 @@ public class ReportsService {
     private boolean getRevenuePerDistributor(Connection connection) {
         try {
             /* query to get total revenue per distributor */
-            final String sqlQuery = "SELECT distributorId, SUM(price) as price from orders GROUP BY  distributorId;";
+            final String sqlQuery = "SELECT distributorId, distributor.name, SUM(price) as price from orders NATURAL JOIN distributor GROUP BY  distributorId;";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
 
             ResultSet resultSet = statement.executeQuery();
