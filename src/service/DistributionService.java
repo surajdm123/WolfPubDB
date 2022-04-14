@@ -333,7 +333,7 @@ public class DistributionService {
                     final int pid = scanner.nextInt();
 
                     System.out.println("Enter the Edition Number:");
-                    final int editionNumber = scanner.nextInt();
+                    final String editionNumber = scanner.nextLine();
 
                     System.out.println("Enter the number of copies:");
                     final int numberOfCopies = scanner.nextInt();
@@ -341,7 +341,7 @@ public class DistributionService {
                     final String bookEditionPriceQuery = "SELECT price FROM editions where pid=? AND edition_number = ?;";
                     PreparedStatement bookEditionPriceStatement = connection.prepareStatement(bookEditionPriceQuery);
                     bookEditionPriceStatement.setInt(1, pid);
-                    bookEditionPriceStatement.setInt(2, editionNumber);
+                    bookEditionPriceStatement.setString(2, editionNumber);
                     final ResultSet bookResultSet = bookEditionPriceStatement.executeQuery();
 
                     double price = 0;
@@ -388,7 +388,7 @@ public class DistributionService {
                         PreparedStatement includesStatement = connection.prepareStatement(includesSqlQuery);
                         includesStatement.setInt(1, orderId);
                         includesStatement.setInt(2, pid);
-                        includesStatement.setInt(3, editionNumber);
+                        includesStatement.setString(3, editionNumber);
                         includesStatement.setInt(4, numberOfCopies);
                         includesStatement.executeUpdate();
 
@@ -413,6 +413,7 @@ public class DistributionService {
                         updateBalanceAmountStatement.setDouble(1, totalPrice);
                         updateBalanceAmountStatement.setInt(2, distributorId);
                         updateBalanceAmountStatement.executeUpdate();
+
 
                         connection.commit();
 
