@@ -397,11 +397,11 @@ public class DistributionService {
                         final String DistributorQuery = "SELECT * FROM distributor where distributorId=?;";
                         PreparedStatement DistributorStatement = connection.prepareStatement(DistributorQuery);
                         DistributorStatement.setInt(1, distributorId);
-                        final ResultSet bookResultSet = DistributorStatement.executeQuery();
+                        final ResultSet bookResultSet2 = DistributorStatement.executeQuery();
 
                         double did = 0;
-                        if(bookResultSet.next()) {
-                            price = bookResultSet.getDouble(1);
+                        if(bookResultSet2.next()) {
+                            price = bookResultSet2.getDouble(1);
                         } else {
                             System.out.println("Could not find a book edition with the provided details. Please try again.");
                             return false;
