@@ -105,6 +105,7 @@ CREATE TABLE `payment` (
   `work_type` VARCHAR(45) NOT NULL,
   `amount` DOUBLE NOT NULL,
   `sid` INT NOT NULL,
+  `claimDate` DATE DEFAULT NULL,
   PRIMARY KEY (`pId`),
      FOREIGN KEY (`sid`)
      REFERENCES `staff` (`sid`)
