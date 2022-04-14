@@ -27,3 +27,6 @@ hs_err_pid*
 
 # Mac related files
 *.DS_Store
+
+#Intellij Files
+*iml
