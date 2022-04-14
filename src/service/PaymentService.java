@@ -1,7 +1,5 @@
 package service;
 
-import com.mysql.cj.jdbc.SuspendableXAConnection;
-
 import java.sql.*;
 import java.util.Scanner;
 
