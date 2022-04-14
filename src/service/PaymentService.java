@@ -3,6 +3,7 @@ package service;
 import java.sql.*;
 import java.util.Scanner;
 
+//Defining a class for Payment Service
 public class PaymentService {
 
     Scanner scanner = new Scanner(System.in);
@@ -12,6 +13,7 @@ public class PaymentService {
         try {
 
             while (true) {
+                //Input from DB user to choose from a list of options
                 System.out.println("Choose from the following:");
                 System.out.println("1. Input amount from Distributor");
                 System.out.println("2. View all transactions\n");
@@ -20,11 +22,13 @@ public class PaymentService {
 
                 int choice = scanner.nextInt();
 
+                //Switch case to handle the choice made by the DB user
                 switch (choice) {
                     case 1:
                         insertTransaction(connection);
                         break;
                     case 2:
+                        //SQL query to fetch distributor name, transaction details to bring up information about transactions of distributors
                         resultSetService.runQueryAndPrintOutput(connection, "Select distributor.name, transactions.* from transactions NATURAL JOIN distributor;");
                         break;
                     case 3:
@@ -39,6 +43,7 @@ public class PaymentService {
         }
     }
 
+    //Function to insert a Transaction entry
     public boolean insertTransaction(final Connection connection) {
 
         try {
@@ -47,6 +52,7 @@ public class PaymentService {
                 connection.setAutoCommit(false);
 
                 System.out.println("Distributors in the database:");
+                //SQL query to fetch all details of a distributor
                 resultSetService.runQueryAndPrintOutput(connection, "Select * from distributor;");
 
                 System.out.println("Enter the Distributor ID:");
@@ -60,6 +66,7 @@ public class PaymentService {
                 System.out.println("Enter the Transaction Date(yyyy-mm-dd):");
                 final String date = scanner.nextLine();
 
+                //SQL query to insert distributor ID, amount, transaction date into transaction table
                 final String sqlQuery = "INSERT INTO `transactions` (`distributorId`, `amount`, `transaction_date`) VALUES (?, ?, ?);";
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setInt(1, distributorId);
@@ -68,6 +75,7 @@ public class PaymentService {
 
                 statement.executeUpdate();
 
+                //SQL query to update distributor details ans set balance amount for a specific distributor
                 final String updateBalanceAmountQuery = "UPDATE `distributor` SET `balanceAmount` = `balanceAmount` - ? WHERE (`distributorId` = ?);";
                 final PreparedStatement updateBalanceStatement = connection.prepareStatement(updateBalanceAmountQuery);
                 updateBalanceStatement.setDouble(1, amount);

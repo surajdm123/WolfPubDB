@@ -140,7 +140,7 @@ public class EditingPublishingService {
         return true;
     }
 
-
+    //Function to get Publication details assigned to a specific editor
     public boolean getAllPublicationsAssignedToEditor(final Connection connection) {
 
         System.out.println("Details about all the Editors: \n");
@@ -168,6 +168,7 @@ public class EditingPublishingService {
 
     }
 
+    //Function to add chapter of  book edition
     public boolean addChapter(final Connection connection) {
 
         System.out.println("Publications in the database:");
@@ -223,6 +224,7 @@ public class EditingPublishingService {
         return true;
     }
 
+    // Function to add article to a periodic publication
     public boolean addArticle(final Connection connection) {
 
         System.out.println("Periodic publications present in the database:");
@@ -275,6 +277,7 @@ public class EditingPublishingService {
         return true;
     }
 
+    //Function to assign an editor to a specific publication
     public boolean assignEditorToPublication(final Connection connection) {
 
         System.out.println("Details about all the Editors: \n");
@@ -321,6 +324,7 @@ public class EditingPublishingService {
         return true;
     }
 
+    //Function to delete a chapter from an edition of a book
     public boolean deleteChapter(final Connection connection) {
 
         System.out.println("Chapters of publications in the database:");
@@ -377,6 +381,7 @@ public class EditingPublishingService {
         return true;
     }
 
+    //Function to delete article from a periodic publication
     public boolean deleteArticle(final Connection connection) {
 
         System.out.println("Articles present in the database:");
@@ -430,6 +435,7 @@ public class EditingPublishingService {
         return true;
     }
 
+    //Function to update book publication information: title/publication date/genre/number of pages
     public boolean updateBookPublication(Connection connection) {
 
         System.out.println("Books in the database:");
@@ -526,6 +532,7 @@ public class EditingPublishingService {
         return true;
     }
 
+    //Function to insert new book publication with details for each publication being entered by the DB user.
     public boolean insertNewBookPublication(final Connection connection) {
 
         // Get book publication details from the user
@@ -549,9 +556,13 @@ public class EditingPublishingService {
         try {
             connection.setAutoCommit(false); // Set auto commit property of the connection to false
             try {
-                // insert publication details including title, publication date, genre, publication type into publication table.
-                String sqlStatement1 = "INSERT INTO `publication` (`title`, `publication_date`, `genre`,`publication_type`) VALUES (?,?,?,?);";
-                PreparedStatement statement1 = connection.prepareStatement(sqlStatement1, Statement.RETURN_GENERATED_KEYS);
+                // insert publication details including title, publication date, genre, publication type
+                // into publication table.
+                String sqlStatement1 =
+                        "INSERT INTO `publication` (`title`, `publication_date`, `genre`,`publication_type`) " +
+                                "VALUES (?,?,?,?);";
+                PreparedStatement statement1 =
+                        connection.prepareStatement(sqlStatement1, Statement.RETURN_GENERATED_KEYS);
                 statement1.setString(1, title);
                 statement1.setString(2, publicationDate);
                 statement1.setString(3, genre);
@@ -604,6 +615,7 @@ public class EditingPublishingService {
         return true;
     }
 
+    //Function to insert new periodic publication information
     public boolean insertNewPeriodicPublication(final Connection connection) {
 
         System.out.println("Enter Publication Title: ");
@@ -673,6 +685,7 @@ public class EditingPublishingService {
         return true;
     }
 
+    //Function to update periodic publication on the basis of title/publication date/genre/periodicity
     public boolean updatePeriodicPublication(Connection connection) {
 
         System.out.println("Periodic Publications in the database:");
