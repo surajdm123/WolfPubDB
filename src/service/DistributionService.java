@@ -148,6 +148,7 @@ public class DistributionService {
 
     public boolean updateDistributor(final Connection connection) {
 
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM orders");
         System.out.println("Enter the Distributor ID you want to update: ");
         final int distributorId = scanner.nextInt();
 
@@ -262,7 +263,7 @@ public class DistributionService {
     private boolean deleteDistributor(Connection connection) {
 
        ResultSetService resultSetService = new ResultSetService();
-       resultSetService.runQueryAndPrintOutput(connection, "select distributorId, name, type, contact from distributor");
+       resultSetService.runQueryAndPrintOutput(connection, "select distributorId, name, type, contact from distributor;");
 
         System.out.println("Enter the Distributor ID: ");
         final int distributorId = scanner.nextInt();
@@ -319,7 +320,7 @@ public class DistributionService {
             final int choice = scanner.nextInt();
 
             LocalDate todayObj = LocalDate.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
             String today = todayObj.format(formatter);
 
 
@@ -366,8 +367,6 @@ public class DistributionService {
                         statement.setInt(1, distributorId);
                         statement.setDouble(2, shippingCost);
 
-
-
                         statement.setString(3, today);
                         statement.setDouble(4, price*numberOfCopies);
 
@@ -394,6 +393,20 @@ public class DistributionService {
                         includesStatement.executeUpdate();
 
                         final double totalPrice = (price*numberOfCopies) + shippingCost;
+
+                        final String DistributorQuery = "SELECT * FROM distributor where distributorId=?;";
+                        PreparedStatement DistributorStatement = connection.prepareStatement(DistributorQuery);
+                        DistributorStatement.setInt(1, distributorId);
+                        final ResultSet bookResultSet = DistributorStatement.executeQuery();
+
+                        double did = 0;
+                        if(bookResultSet.next()) {
+                            price = bookResultSet.getDouble(1);
+                        } else {
+                            System.out.println("Could not find a book edition with the provided details. Please try again.");
+                            return false;
+                        }
+                        resultSetService.runQueryAndPrintOutput(connection, "Select * from distributor;");
 
                         final String updateBalanceAmountQuery = "UPDATE `distributor` SET `balanceAmount` = `balanceAmount` + ? WHERE (`distributorId` = ?);";
                         final PreparedStatement updateBalanceAmountStatement = connection.prepareStatement(updateBalanceAmountQuery);
@@ -484,6 +497,8 @@ public class DistributionService {
                         includesStatement.executeUpdate();
 
                         final double totalPrice2 = (price2*numberOfCopies2) + shippingCost2;
+
+                        resultSetService.runQueryAndPrintOutput(connection, "Select * from distributor;");
 
                         final String updateBalanceAmountQuery = "UPDATE `distributor` SET `balanceAmount` = `balanceAmount` + ? WHERE (`distributorId` = ?);";
                         final PreparedStatement updateBalanceAmountStatement = connection.prepareStatement(updateBalanceAmountQuery);
@@ -597,6 +612,7 @@ public class DistributionService {
 
                 switch (choice) {
                     case 1:
+                        resultSetService.runQueryAndPrintOutput(connection, "Select * from distributor;");
                         System.out.println("Enter the new Total Balance: \t");
                         final String newBalance = scanner.nextLine();
                         final String balanceUpdateSqlQuery = "UPDATE distributor SET balanceAmount = ? WHERE distributorId = ?;";
