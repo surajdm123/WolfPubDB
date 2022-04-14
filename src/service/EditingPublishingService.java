@@ -181,6 +181,8 @@ public class EditingPublishingService {
         System.out.println("Enter the publication ID: ");
         final int publicationId = scanner.nextInt();
 
+        scanner.nextLine();
+
         System.out.println("Enter the edition number: ");
         final String editionNumber = scanner.nextLine();
 
