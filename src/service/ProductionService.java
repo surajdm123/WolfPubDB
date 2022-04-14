@@ -49,9 +49,10 @@ public class ProductionService {
                 System.out.println("PAYMENT:");
                 System.out.println("17. Set payment for an editor");
                 System.out.println("18. Set payment for an author");
-                System.out.println("19. Get payment claimed details\n");
+                System.out.println("19. Get payment claimed details");
+                System.out.println("20. Claim a payment\n");
 
-                System.out.println("20. Return to Main Menu\n");
+                System.out.println("21. Return to Main Menu\n");
 
                 System.out.println("Enter your choice:");
 
@@ -117,12 +118,15 @@ public class ProductionService {
                         getPaymentClaimDetails(connection);
                         break;
                     case 20:
+                        claimPayment(connection);
+                        break;
+                    case 21:
                         break;
                     default:
                         System.out.println("Invalid Input");
                 }
 
-                if (choice == 20) {
+                if (choice == 21) {
                     break;
                 }
             }
@@ -130,6 +134,36 @@ public class ProductionService {
             System.out.println("Exception occurred: " + e.getMessage());
         }
 
+    }
+
+    public boolean claimPayment(final Connection connection){
+
+        try {
+            System.out.println("Here is a list of payments: \n");
+            resultSetService.runQueryAndPrintOutput(connection, "SELECT payment.*, staff.name as 'Name' from payment NATURAL JOIN staff;");
+
+            System.out.println("Enter the payId you want to claim:");
+            final int payId = scanner.nextInt();
+
+            scanner.nextLine();
+
+            System.out.println("Enter the claim date (yyyy-mm-dd):");
+            final String claimDate = scanner.nextLine();
+
+            final String claimUpdateSqlQuery = "UPDATE payment SET claimDate = ? WHERE (`pId` = ?)";
+            final PreparedStatement statement = connection.prepareStatement(claimUpdateSqlQuery);
+            statement.setString(1, claimDate);
+            statement.setInt(2, payId);
+            int updatedRows = statement.executeUpdate();
+
+            System.out.println("Updated " + updatedRows + " row(s).");
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
     }
 
     public boolean insertNewBookEdition(final Connection connection){
@@ -320,6 +354,9 @@ public class ProductionService {
 
         System.out.println("Enter the publication ID of the magazine/journal for which you want to add an issue: ");
         final int pubID = scanner.nextInt();
+
+        System.out.println("List of issues present for the publication:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM issues where pid=" + pubID+";");
 
         System.out.println("Enter the Issue ID of the new issue to be added: ");
         final int issueID = scanner.nextInt();
@@ -515,18 +552,24 @@ public class ProductionService {
 
     public boolean insertNewBookChapter(final Connection connection){
 
-        System.out.println("Here is a list of chapters and their details for various books in the database:");
-        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from chapters;");
+        System.out.println("Here is a list of book publications in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from publication where publication_type='Book';");
 
         System.out.println("Enter the publication ID of the book for which you want to add a chapter: ");
         final int pubID = scanner.nextInt();
 
         scanner.nextLine();
 
+        System.out.println("Here is a list of editions and their details for the book in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from editions where pid=" + pubID +";");
+
         System.out.println("Enter the edition number of the above book for which you want to add a chapter: ");
         final String edNum = scanner.nextLine();
 
-        System.out.println("Enter the chapter number: ");
+        System.out.println("Here is a list of chapters and their details for the book edition in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from chapters where pid=" + pubID +" AND edition_number= '" + edNum + "';");
+
+        System.out.println("Enter the new chapter number: ");
         final int chapNum = scanner.nextInt();
 
         scanner.nextLine();
@@ -537,16 +580,20 @@ public class ProductionService {
         System.out.println("Enter the text/content of the chapter: ");
         final String chapText = scanner.nextLine();
 
+        System.out.println("Enter the chapter date (yyyy-mm-dd): ");
+        final String chapterDate = scanner.nextLine();
+
         try {
             connection.setAutoCommit(false);
             try {
-                final String sqlQuery = "INSERT INTO `chapters` (`chapter_number`, `pid`, `edition_number`, `chapter_name`, `text`) VALUES (?, ?, ?, ?, ?);";
+                final String sqlQuery = "INSERT INTO `chapters` (`chapter_number`, `pid`, `edition_number`, `chapter_name`, `text`, `chapter_date`) VALUES (?, ?, ?, ?, ?, ?);";
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setInt(1, chapNum);
                 statement.setInt(2, pubID);
                 statement.setString(3, edNum);
                 statement.setString(4, chapName);
                 statement.setString(5, chapText);
+                statement.setString(6, chapterDate);
 
                 statement.executeUpdate();
 
@@ -587,6 +634,7 @@ public class ProductionService {
         System.out.println("What would you like to update for the above selected chapter?");
         System.out.println("1. Chapter Name");
         System.out.println("2. Chapter Text/Content");
+        System.out.println("3. Chapter Date");
 
         System.out.println("Enter your choice: \t");
         final int choice = scanner.nextInt();
@@ -633,6 +681,22 @@ public class ProductionService {
 
                         System.out.println("Successfully updated " + updatedRows + "row(s).");
                         break;
+                    case 3:
+                        System.out.println("Enter the new date of the chapter: \t");
+                        final String newDate = scanner.nextLine();
+
+                        final String dateUpdateSqlQuery = "UPDATE chapters SET chapter_date = ? WHERE (`chapter_number` = ?) AND (`pid` = ?) AND (`edition_number` = ?);";
+                        PreparedStatement dateUpdateStatement = connection.prepareStatement(dateUpdateSqlQuery);
+                        dateUpdateStatement.setString(1, newDate);
+                        dateUpdateStatement.setInt(2, chapNum);
+                        dateUpdateStatement.setInt(3, pid);
+                        dateUpdateStatement.setString(4, edNum);
+
+                        updatedRows = dateUpdateStatement.executeUpdate();
+                        connection.commit();
+
+                        System.out.println("Successfully updated " + updatedRows + "row(s).");
+                        break;
 
                     default:
                         System.out.println("Invalid Input. Please try again");
@@ -658,7 +722,7 @@ public class ProductionService {
     public boolean insertNewArticle(final Connection connection){
 
         System.out.println("Here is a list of magazine/journal issues:");
-        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from issues;");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT issues.*,periodic_publication.periodicty as 'Periodicity', publication.title as 'Publication Name'   from issues NATURAL JOIN periodic_publication NATURAL JOIN publication;");
 
         System.out.println("Enter the issue ID of the issue for which you want to add an article: ");
         final int issueID = scanner.nextInt();
@@ -711,7 +775,7 @@ public class ProductionService {
     public boolean updateArticle(final Connection connection){
 
         System.out.println("Here is a list of articles present in various issues of magazines/journals:");
-        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM articles;");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT articles.*, publication.title, periodic_publication.periodicty as 'Periodicity', issues.issue_title FROM articles NATURAL JOIN issues NATURAL JOIN periodic_publication NATURAL JOIN publication;");
 
         System.out.println("Enter the article ID you want to update: ");
         final int articleID = scanner.nextInt();
@@ -820,7 +884,7 @@ public class ProductionService {
         String genre = scanner.nextLine();
 
         try {
-            final String sqlQuery = "SELECT title FROM publication where publication_type='Book' and (`genre` = ?);";
+            final String sqlQuery = "SELECT publication.*, GROUP_CONCAT(staff.name) as 'Author Name(s)' FROM publication NATURAL JOIN writes LEFT OUTER JOIN staff ON writes.sid = staff.sid where publication_type='Book' and (`genre` = ?) GROUP BY publication.pid;";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, genre);
 
@@ -842,7 +906,7 @@ public class ProductionService {
         String bookDate = scanner.nextLine();
 
         try {
-            final String sqlQuery = "SELECT title FROM publication where publication_type='Book' and (`publication_date` = ?);";
+            final String sqlQuery = "SELECT publication.*, GROUP_CONCAT(staff.name) as 'Author Name(s)' FROM publication NATURAL JOIN writes LEFT OUTER JOIN staff ON writes.sid = staff.sid where publication_type='Book' and (`publication_date` = ?) GROUP BY publication.pid;";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, bookDate);
 
@@ -861,13 +925,13 @@ public class ProductionService {
     public boolean findBookByAuthor(final Connection connection){
 
         System.out.println("Here is a list of authors: \n");
-        resultSetService.runQueryAndPrintOutput(connection, "SELECT name FROM staff where title = 'Author';");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT sid, name FROM staff where title = 'Author';");
 
         System.out.println("Enter the name of the author whose books you would like to find: ");
         String authorName = scanner.nextLine();
 
         try {
-            final String sqlQuery = "SELECT title FROM publication, writes where publication.pid = writes.pid AND writes.sid IN (SELECT sid from staff where (`name` = ?) AND title='Author');";
+            final String sqlQuery = "SELECT publication.* FROM publication, writes where publication.pid = writes.pid AND writes.sid IN (SELECT sid from staff where (`name` = ?) AND title='Author');";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, authorName);
 
@@ -892,7 +956,7 @@ public class ProductionService {
         String genre = scanner.nextLine();
 
         try {
-            final String sqlQuery = "SELECT a.name FROM publication p, articles a where p.pid=a.pid and (`genre` = ?);";
+            final String sqlQuery = "SELECT a.*, p.title FROM publication p, articles a where p.pid=a.pid and (`genre` = ?);";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, genre);
 
@@ -914,7 +978,7 @@ public class ProductionService {
         String articleDate = scanner.nextLine();
 
         try {
-            final String sqlQuery = "SELECT name FROM articles where (`date` = ?);";
+            final String sqlQuery = "SELECT articles.*, publication.title FROM articles NATURAL JOIN publication where (`date` = ?);";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, articleDate);
 
@@ -939,7 +1003,7 @@ public class ProductionService {
         String authorName = scanner.nextLine();
 
         try {
-            final String sqlQuery = "SELECT name FROM publication p, articles a where p.pid = a.pid AND p.pid IN (SELECT publication.pid from publication, writes where publication.pid = writes.pid AND writes.sid IN (SELECT sid from staff where (`name` = ?) and title='Author'));";
+            final String sqlQuery = "SELECT a.*, p.title FROM publication p, articles a where p.pid = a.pid AND p.pid IN (SELECT publication.pid from publication, writes where publication.pid = writes.pid AND writes.sid IN (SELECT sid from staff where (`name` = ?) and title='Author'));";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, authorName);
 
@@ -956,48 +1020,34 @@ public class ProductionService {
     }
 
     public boolean setPaymentForEditor(final Connection connection){
-       
-        System.out.println("List of Editors in the database:");
-        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from staff where title='Editor';");
-
-        System.out.println("Enter SID for the Editor to add payment: ");
-        final int sid = scanner.nextInt();
-        int updatedRows = 0;
-        String work_type = "EDITORIAL";
-
-        LocalDate dateObj = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String date = dateObj.format(formatter);
 
         try {
-            connection.setAutoCommit(false);
+            System.out.println("List of Editors in the database:");
+            resultSetService.runQueryAndPrintOutput(connection, "SELECT * from staff NATURAL JOIN editor where title='Editor';");
 
-            final String existingPay = "SELECT toPay FROM editor where sid=?;";
-            PreparedStatement statement = connection.prepareStatement(existingPay);
-            statement.setInt(1, sid);
-            ResultSet resultSet = statement.executeQuery();
-            double toPay = getAmount(resultSet);
+            System.out.println("Enter SID for the Editor to add payment: ");
+            final int sid = scanner.nextInt();
+
+            String work_type = "EDITORIAL";
 
             System.out.println("Enter payment amount: ");
             double amount = scanner.nextDouble();
-            toPay += amount;
 
-            final String pagesUpdateSqlQuery = "UPDATE editor SET toPay = ? WHERE sid = ?;";
-            PreparedStatement pagesUpdateStatement = connection.prepareStatement(pagesUpdateSqlQuery);
-            pagesUpdateStatement.setDouble(1, toPay);
-            pagesUpdateStatement.setInt(2, sid);
-            updatedRows = pagesUpdateStatement.executeUpdate();
+            scanner.nextLine();
+
+            System.out.println("Enter Pay Date: ");
+            final String date = scanner.nextLine();
 
             final String sqlQuery = "INSERT INTO `payment` (`payDate`, `work_type`, `amount`,`sid`) VALUES (?, ?, ?, ?);";
-            PreparedStatement statement1 = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement statement1 = connection.prepareStatement(sqlQuery);
             statement1.setString(1, date);
             statement1.setString(2, work_type);
             statement1.setDouble(3, amount);
             statement1.setInt(4, sid);
 
             statement1.executeUpdate();
-            connection.commit();
-            connection.setAutoCommit(true);
+
+            System.out.println("Payment has been successfully made.");
 
         } catch (Exception e) {
             System.out.println("Exception Occurred: " + e.getMessage());
@@ -1008,53 +1058,41 @@ public class ProductionService {
     }
 
     public boolean setPaymentForAuthor(final Connection connection){
-        System.out.println("List of Authors in the database:");
-        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from staff where title='Author';");
-
-        System.out.println("Enter SID for the Author to add payment: ");
-        final int sid = scanner.nextInt();
-        int updatedRows = 0;
-        String work_type = "BOOK_AUTHORSHIP";
-
-        LocalDate dateObj = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String date = dateObj.format(formatter);
 
         try {
-            connection.setAutoCommit(false);
+            System.out.println("List of Authors in the database:");
+            resultSetService.runQueryAndPrintOutput(connection, "SELECT * from staff NATURAL JOIN author where title='Author';");
+            String work_type = "BOOK_AUTHORSHIP";
 
-            final String existingPay = "SELECT toPay FROM author where sid=?;";
-            PreparedStatement statement = connection.prepareStatement(existingPay);
-            statement.setInt(1, sid);
-            ResultSet resultSet = statement.executeQuery();
-            double toPay = getAmount(resultSet);
+            System.out.println("Enter SID for the Editor to add payment: ");
+            final int sid = scanner.nextInt();
 
             System.out.println("Enter payment amount: ");
             double amount = scanner.nextDouble();
-            toPay += amount;
 
-            final String pagesUpdateSqlQuery = "UPDATE author SET toPay = ? WHERE sid = ?;";
-            PreparedStatement pagesUpdateStatement = connection.prepareStatement(pagesUpdateSqlQuery);
-            pagesUpdateStatement.setDouble(1, toPay);
-            pagesUpdateStatement.setInt(2, sid);
-            updatedRows = pagesUpdateStatement.executeUpdate();
+            scanner.nextLine();
+
+            System.out.println("Enter Pay Date: ");
+            final String date = scanner.nextLine();
 
             final String sqlQuery = "INSERT INTO `payment` (`payDate`, `work_type`, `amount`,`sid`) VALUES (?, ?, ?, ?);";
-            PreparedStatement statement1 = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement statement1 = connection.prepareStatement(sqlQuery);
             statement1.setString(1, date);
             statement1.setString(2, work_type);
             statement1.setDouble(3, amount);
             statement1.setInt(4, sid);
 
             statement1.executeUpdate();
-            connection.commit();
-            connection.setAutoCommit(true);
+
+            System.out.println("Payment has been successfully made.");
 
         } catch (Exception e) {
             System.out.println("Exception Occurred: " + e.getMessage());
             return false;
         }
+
         return true;
+
     }
 
     public boolean getPaymentClaimDetails(final Connection connection){
@@ -1086,6 +1124,12 @@ public class ProductionService {
 
         List<String> headerColumns = getHeaderColumns(resultSet);
         String columnValue = "";
+
+        if (!resultSet.isBeforeFirst() ) {
+
+            throw new SQLException("No author/editor found.");
+        }
+
         while(resultSet.next()) {
             for(int i=1; i<=headerColumns.size(); i++) {
                 columnValue = resultSet.getString(i);

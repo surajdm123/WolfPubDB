@@ -20,14 +20,21 @@ public class ResultSetService {
         try {
             List<String> headerColumns = getHeaderColumns(resultSet);
 
-            while(resultSet.next()) {
+            if (!resultSet.isBeforeFirst() ) {
                 System.out.println("-----------------");
-                for(int i=1; i<=headerColumns.size(); i++) {
-                    String columnValue = resultSet.getString(i);
-                    System.out.println(headerColumns.get(i-1) + ": " + columnValue);
+                System.out.println("NO DATA");
+                System.out.println("-----------------");
+            } else {
+                while(resultSet.next()) {
+                    System.out.println("-----------------");
+                    for(int i=1; i<=headerColumns.size(); i++) {
+                        String columnValue = resultSet.getString(i);
+                        System.out.println(headerColumns.get(i-1) + ": " + columnValue);
+                    }
                 }
+                System.out.println("-----------------");
             }
-            System.out.println("-----------------");
+
         } catch (Exception e) {
             System.out.println("Exception occured: " + e.getMessage());
             return;
@@ -40,6 +47,14 @@ public class ResultSetService {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sqlQuery);
             List<String> headerColumns = getHeaderColumns(resultSet);
+
+            if (!resultSet.isBeforeFirst() ) {
+                System.out.println("-----------------");
+                System.out.println("NO DATA");
+                System.out.println("-----------------");
+
+                return;
+            }
 
             System.out.println("-------------------------------------");
 

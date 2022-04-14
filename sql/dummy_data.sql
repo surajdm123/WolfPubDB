@@ -4,7 +4,7 @@ INSERT INTO `author` (`sid`, `isInvited`, `toPay`, `payDueDate`) VALUES (3003,1,
 
 INSERT INTO `editor` (`sid`, `isInvited`, `toPay`, `payDueDate`) VALUES (3001,0,1000,'2020-04-01'),(3002,0,1000,'2020-04-01');
 
-INSERT INTO `publication` (`pid`, `title`, `publication_date`, `genre`, `publication_type`) VALUES (1001,'introduction to database','2018-10-10','technology','book'),(1002,'Healthy Diet','2020-02-24','health','Magazine'),(1003,'Animal Science','2020-03-01','science','Journal');
+INSERT INTO `publication` (`pid`, `title`, `publication_date`, `genre`, `publication_type`) VALUES (1001,'introduction to database','2018-10-10','technology','Book'),(1002,'Healthy Diet','2020-02-24','health','Magazine'),(1003,'Animal Science','2020-03-01','science','Journal');
 
 INSERT INTO `periodic_publication` (`pid`, `periodicty`) VALUES (1002,'Weekly'),(1003,'Monthly');
 
@@ -27,3 +27,5 @@ INSERT INTO `orders` (`orderId`, `distributorId`, `shipCost`, `orderDate`, `pric
 INSERT INTO `includes` (`orderId`, `pid`, `edition_number`, `number_of_copies`) VALUES (4001,1001,'2ed',30),(4002,1001,'2ed',10);
 
 INSERT INTO `consists` (`orderId`, `pid`, `issueId`, `number_of_copies`) VALUES (4003,1003,1,10);
+
+INSERT INTO `staff` (`sid`, `name`, `dob`, `address`, `phone`, `emailID`, `hireDate`, `title`) VALUES ('3000', 'Muniyappa', '1996-09-11', '3232 ABC St, NC 27606', '9195552367', '3000@gmail.com', '2020-04-01', 'Billing Staff');
