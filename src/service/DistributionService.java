@@ -472,8 +472,6 @@ public class DistributionService {
                             return false;
                         }
 
-                        /* query to display distributor information */
-                        resultSetService.runQueryAndPrintOutput(connection, "Select * from distributor;");
                         /* query to update distributor information with balance amount */
                         final String updateBalanceAmountQuery = "UPDATE `distributor` SET `balanceAmount` = `balanceAmount` + ? WHERE (`distributorId` = ?);";
                         final PreparedStatement updateBalanceAmountStatement = connection.prepareStatement(updateBalanceAmountQuery);

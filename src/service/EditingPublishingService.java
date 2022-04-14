@@ -184,24 +184,27 @@ public class EditingPublishingService {
         System.out.println("Enter the edition number: ");
         final String editionNumber = scanner.nextLine();
 
-        scanner.nextLine();
         System.out.println("Enter the chapter name: ");
         final String chapterName = scanner.nextLine();
 
         System.out.println("Enter the chapter text: ");
         final String chapterText = scanner.nextLine();
 
+        System.out.println("Enter the chapter date (yyyy-mm-dd): ");
+        final String chapterDate = scanner.nextLine();
+
         try {
             connection.setAutoCommit(false);
             try {
                 // Insert chapter details into chapter table including chapter nummber, publication id, edition number, chapter name, text of the chapter
-                final String sqlQuery = "INSERT INTO `chapters` (`chapter_number`, `pid`, `edition_number`, `chapter_name`, `text`) VALUES (?, ?, ?, ?, ?);";
+                final String sqlQuery = "INSERT INTO `chapters` (`chapter_number`, `pid`, `edition_number`, `chapter_name`, `text`, `chapter_date`) VALUES (?, ?, ?, ?, ?, ?);";
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setInt(1, chapterNumber);
                 statement.setInt(2, publicationId);
                 statement.setString(3, editionNumber);
                 statement.setString(4, chapterName);
                 statement.setString(5, chapterText);
+                statement.setString(6, chapterDate);
 
                 statement.executeUpdate();
 
