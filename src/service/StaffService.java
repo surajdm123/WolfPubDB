@@ -84,6 +84,10 @@ public class StaffService {
 
         final int choice = getChoice();
 
+        if(choice == 6) {
+            return;
+        }
+
         System.out.println("Enter the Name: ");
         final String name = scanner.nextLine();
 
@@ -286,6 +290,8 @@ public class StaffService {
                         authorStatement.executeUpdate();
                         connection.commit();
                         System.out.println("Successfully Inserted new staff member with sid=" + sid);
+                        break;
+                    case 6:
                         break;
                     default:
                         System.out.println("Invalid Entry, please try again.");
