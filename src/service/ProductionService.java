@@ -1,8 +1,10 @@
 package service;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ProductionService {
@@ -940,11 +942,105 @@ public class ProductionService {
     }
 
     public boolean setPaymentForEditor(final Connection connection){
-        return false;
+       
+        System.out.println("List of Editors in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from staff where title='Editor';");
+
+        System.out.println("Enter SID for the Editor to add payment: ");
+        final int sid = scanner.nextInt();
+        int updatedRows = 0;
+        String work_type = "EDITORIAL";
+
+        LocalDate dateObj = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String date = dateObj.format(formatter);
+
+        try {
+            connection.setAutoCommit(false);
+
+            final String existingPay = "SELECT toPay FROM editor where sid=?;";
+            PreparedStatement statement = connection.prepareStatement(existingPay);
+            statement.setInt(1, sid);
+            ResultSet resultSet = statement.executeQuery();
+            double toPay = getAmount(resultSet);
+
+            System.out.println("Enter payment amount: ");
+            double amount = scanner.nextDouble();
+            toPay += amount;
+
+            final String pagesUpdateSqlQuery = "UPDATE editor SET toPay = ? WHERE sid = ?;";
+            PreparedStatement pagesUpdateStatement = connection.prepareStatement(pagesUpdateSqlQuery);
+            pagesUpdateStatement.setDouble(1, toPay);
+            pagesUpdateStatement.setInt(2, sid);
+            updatedRows = pagesUpdateStatement.executeUpdate();
+
+            final String sqlQuery = "INSERT INTO `payment` (`payDate`, `work_type`, `amount`,`sid`) VALUES (?, ?, ?, ?);";
+            PreparedStatement statement1 = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+            statement1.setString(1, date);
+            statement1.setString(2, work_type);
+            statement1.setDouble(3, amount);
+            statement1.setInt(4, sid);
+
+            statement1.executeUpdate();
+            connection.commit();
+            connection.setAutoCommit(true);
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+
+        return true;
     }
 
     public boolean setPaymentForAuthor(final Connection connection){
-        return false;
+        System.out.println("List of Authors in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * from staff where title='Author';");
+
+        System.out.println("Enter SID for the Author to add payment: ");
+        final int sid = scanner.nextInt();
+        int updatedRows = 0;
+        String work_type = "BOOK_AUTHORSHIP";
+
+        LocalDate dateObj = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String date = dateObj.format(formatter);
+
+        try {
+            connection.setAutoCommit(false);
+
+            final String existingPay = "SELECT toPay FROM author where sid=?;";
+            PreparedStatement statement = connection.prepareStatement(existingPay);
+            statement.setInt(1, sid);
+            ResultSet resultSet = statement.executeQuery();
+            double toPay = getAmount(resultSet);
+
+            System.out.println("Enter payment amount: ");
+            double amount = scanner.nextDouble();
+            toPay += amount;
+
+            final String pagesUpdateSqlQuery = "UPDATE author SET toPay = ? WHERE sid = ?;";
+            PreparedStatement pagesUpdateStatement = connection.prepareStatement(pagesUpdateSqlQuery);
+            pagesUpdateStatement.setDouble(1, toPay);
+            pagesUpdateStatement.setInt(2, sid);
+            updatedRows = pagesUpdateStatement.executeUpdate();
+
+            final String sqlQuery = "INSERT INTO `payment` (`payDate`, `work_type`, `amount`,`sid`) VALUES (?, ?, ?, ?);";
+            PreparedStatement statement1 = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+            statement1.setString(1, date);
+            statement1.setString(2, work_type);
+            statement1.setDouble(3, amount);
+            statement1.setInt(4, sid);
+
+            statement1.executeUpdate();
+            connection.commit();
+            connection.setAutoCommit(true);
+
+        } catch (Exception e) {
+            System.out.println("Exception Occurred: " + e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     public boolean getPaymentClaimDetails(final Connection connection){
@@ -970,6 +1066,28 @@ public class ProductionService {
 
         return true;
 
+    }
+
+    private double getAmount(ResultSet resultSet) throws SQLException {
+
+        List<String> headerColumns = getHeaderColumns(resultSet);
+        String columnValue = "";
+        while(resultSet.next()) {
+            for(int i=1; i<=headerColumns.size(); i++) {
+                columnValue = resultSet.getString(i);
+            }
+        }
+        return Double.parseDouble(columnValue);
+    }
+
+    private List<String> getHeaderColumns(final ResultSet resultSet) throws SQLException {
+        List<String> headerColumns = new ArrayList<>();
+        ResultSetMetaData rsMetaData = resultSet.getMetaData();
+        int count = rsMetaData.getColumnCount();
+        for(int i=1; i<=count; i++) {
+            headerColumns.add(rsMetaData.getColumnLabel(i));
+        }
+        return headerColumns;
     }
 
 }
