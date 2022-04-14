@@ -509,6 +509,10 @@ public class EditingPublishingService {
         final String publicationType = MYSQL_CONSTANTS.BOOK;
         System.out.println("Enter Number of Pages: ");
         final int numberOfPages = scanner.nextInt();
+
+        System.out.println("Authors in the database:");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM staff where title='Author'");
+
         System.out.println("Enter Author Id:");
         final int authorId = scanner.nextInt();
 

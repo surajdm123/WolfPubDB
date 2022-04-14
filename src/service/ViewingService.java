@@ -35,11 +35,15 @@ public class ViewingService {
                         break;
                     case 3:
                         resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM distributor;");
-                        return;
+                        break;
                     case 4:
                         resultSetService.runQueryAndPrintOutput(connection, "SELECT payment.*, staff.name, staff.title FROM payment NATURAL JOIN staff;");
+                        break;
                     case 5:
                         resultSetService.runQueryAndPrintOutput(connection, "SELECT * FROM publication;");
+                        break;
+                    case 6:
+                        return;
                     default:
                         System.out.println("Invalid Input, Please try again.");
                         break;
