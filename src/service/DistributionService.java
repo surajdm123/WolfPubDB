@@ -488,6 +488,8 @@ public class DistributionService {
                         System.out.println("Order Placed On: " + orderDate);
                         System.out.println("Delivered On: " + deliveryDate);
 
+                        connection.setAutoCommit(true);
+
                     } catch (SQLException e) {
                         /* rollback transaction in case of failure */
                         connection.rollback();
@@ -604,6 +606,8 @@ public class DistributionService {
                         System.out.println("Total Price: " + totalPrice2);
                         System.out.println("Order Placed On: " + today);
                         System.out.println("Delivered On: " + deliveryDate2);
+
+                        connection.setAutoCommit(true);
 
                     } catch (SQLException e) {
                         /* rollback transaction in case of failure */
