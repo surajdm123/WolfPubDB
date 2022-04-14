@@ -78,7 +78,7 @@ CREATE TABLE `distributor` (
   `phoneNum` VARCHAR(45) NOT NULL,
   `contact` VARCHAR(45) NOT NULL,
   `balanceAmount` DOUBLE DEFAULT 0,
- 
+
 PRIMARY KEY (`distributorId`))
 ;
 
@@ -144,7 +144,7 @@ CREATE TABLE `publication` (
 CREATE TABLE `edits` (
   `sid` INT NOT NULL,
   `pid` INT NOT NULL,
-  status VARCHAR(50) NOT NULL DEFAULT "IN_PROGRESS"
+  status VARCHAR(50) NOT NULL DEFAULT "IN_PROGRESS",
   PRIMARY KEY (`sid`, `pid`),
      FOREIGN KEY (`sid`)
      REFERENCES `editor` (`sid`)
@@ -192,17 +192,17 @@ CREATE TABLE `periodic_publication` (
 ;
 
 CREATE TABLE `editions` (
-  `edition_number` INT NOT NULL,
-`pid` INT NOT NULL,
-  `price` DOUBLE NOT NULL,
-  `isbn` VARCHAR(45) NOT NULL,
-  `edition_date` DATE NOT NULL DEFAULT NOW(),
-  UNIQUE(isbn),
-  PRIMARY KEY (`edition_number`, `pid`),
-     FOREIGN KEY (`pid`)
-     REFERENCES `book` (`pid`)
-     ON DELETE CASCADE
-     ON UPDATE CASCADE)
+    `edition_number` INT NOT NULL,
+    `pid` INT NOT NULL,
+    `price` DOUBLE NOT NULL,
+    `isbn` VARCHAR(45) NOT NULL,
+    `edition_date` DATE NOT NULL DEFAULT "2022-04-18",
+    UNIQUE (isbn),
+    PRIMARY KEY (`edition_number` , `pid`),
+    FOREIGN KEY (`pid`)
+        REFERENCES `book` (`pid`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+)
 ;
 
 CREATE TABLE `chapters` (
@@ -211,11 +211,11 @@ CREATE TABLE `chapters` (
   `edition_number` INT NOT NULL,
   `chapter_name` VARCHAR(45) NOT NULL,
   `text` VARCHAR(200) NOT NULL,
-  `chapter_date` DATE NOT NULL DEFAULT NOW(),
+  `chapter_date` DATE NOT NULL DEFAULT "2022-04-18",
   PRIMARY KEY (`chapter_number`, `pid`, `edition_number`),
      FOREIGN KEY (`pid`)
      REFERENCES `editions` (`pid`)
- 
+
 ON DELETE CASCADE
      ON UPDATE CASCADE,
      FOREIGN KEY (`edition_number`)
@@ -270,7 +270,7 @@ CREATE TABLE  `includes` (
      FOREIGN KEY (`orderId`)
      REFERENCES `orders` (`orderId`)
      ON DELETE CASCADE
- 
+
 ON UPDATE CASCADE,
      FOREIGN KEY (`edition_number`)
      REFERENCES `editions` (`edition_number`)
