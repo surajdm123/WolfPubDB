@@ -261,6 +261,8 @@ public class StaffService {
                         System.out.println("Enter the person's salary/toPay amount: \t");
                         double toPay2 = scanner.nextDouble();
 
+                        scanner.nextLine();
+
                         System.out.println("Enter the pay-due/paycheck date (yyyy-mm-dd):");
                         final String date2 = scanner.nextLine();
 
