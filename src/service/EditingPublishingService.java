@@ -620,6 +620,7 @@ public class EditingPublishingService {
     //Function to insert new periodic publication information
     public boolean insertNewPeriodicPublication(final Connection connection) {
 
+        /* Request user input for new periodic publication information */
         System.out.println("Enter Publication Title: ");
         final String title = scanner.nextLine();
         System.out.println("Enter Publication Date (yyyy-mm-dd): ");
@@ -632,22 +633,25 @@ public class EditingPublishingService {
         final String periodicity = scanner.nextLine();
 
         System.out.println("Authors in the database");
+
+        /* display authors list from staff table */
         resultSetService.runQueryAndPrintOutput(connection, "SELECT sid, name from staff where title='Author';");
 
         System.out.println("Enter Author Id:");
         final int authorId = scanner.nextInt();
 
         try {
+            /* disable autocommit mode */
             connection.setAutoCommit(false);
             try{
-                //Insert publication details like title, publication date, genre, publication type into publication table entries.
+                /* Insert publication details like title, publication date, genre, publication type into publication table entries. */
                 String sqlStatement1 = "INSERT INTO `publication` (`title`, `publication_date`, `genre`,`publication_type`) VALUES (?,?,?,?);";
                 PreparedStatement statement1 = connection.prepareStatement(sqlStatement1, Statement.RETURN_GENERATED_KEYS);
                 statement1.setString(1, title);
                 statement1.setString(2, publicationDate);
                 statement1.setString(3, genre);
                 statement1.setString(4, publicationType);
-
+                /* execute query */
                 statement1.executeUpdate();
 
                 ResultSet rs = statement1.getGeneratedKeys();
@@ -660,22 +664,25 @@ public class EditingPublishingService {
                     throw new SQLException("Could not insert into table publication");
                 }
 
-                //Insert periodic publication details like publication id and periodicity into the publication table.
+                /* Insert periodic publication details like publication id and periodicity into the publication table. */
                 String sqlStatement2 = "INSERT INTO `periodic_publication` (`pid`, `periodicty`) VALUES (?,?);";
                 PreparedStatement statement2 = connection.prepareStatement(sqlStatement2);
                 statement2.setInt(1, pid);
                 statement2.setString(2, periodicity);
                 statement2.executeUpdate();
 
-                //Insert author details responsible for writing a specific publication type/category
+                /* Insert author details responsible for writing a specific publication type/category */
                 String sqlStatement3 = "INSERT INTO `writes` (`sid`, `pid`) VALUES (?,?);";
                 PreparedStatement statement3 = connection.prepareStatement(sqlStatement3);
                 statement3.setInt(1, authorId);
                 statement3.setInt(2, pid);
                 statement3.executeUpdate();
 
+                /* commit transaction */
                 connection.commit();
                 System.out.println("Periodic Publication successfully inserted (pid=" + pid + ").\n\n");
+
+                /* enable autocommit mode */
                 connection.setAutoCommit(true);
 
             } catch (Exception e) {
