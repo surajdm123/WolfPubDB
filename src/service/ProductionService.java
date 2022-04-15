@@ -1086,14 +1086,17 @@ public class ProductionService {
             System.out.println("Enter SID for the Editor to add payment: ");
             final int sid = scanner.nextInt();
 
-            String work_type = "EDITORIAL";
+            scanner.nextLine();
+
+            System.out.println("Enter Work Type for the Editor to add payment: ");
+            final String work_type = scanner.nextLine();
 
             System.out.println("Enter payment amount: ");
             double amount = scanner.nextDouble();
 
             scanner.nextLine();
 
-            System.out.println("Enter Pay Date: ");
+            System.out.println("Enter Pay Date (yyyy-mm-dd): ");
             final String date = scanner.nextLine();
 
             //SQL query to insert payment details into the database
@@ -1123,17 +1126,21 @@ public class ProductionService {
             System.out.println("List of Authors in the database:");
             //SQL query to list the authors in the database
             resultSetService.runQueryAndPrintOutput(connection, "SELECT * from staff NATURAL JOIN author where title='Author';");
-            String work_type = "BOOK_AUTHORSHIP";
 
-            System.out.println("Enter SID for the Editor to add payment: ");
+            System.out.println("Enter SID for the Author to add payment: ");
             final int sid = scanner.nextInt();
+
+            scanner.nextLine();
+
+            System.out.println("Enter Work Type for the Author to add payment: ");
+            final String work_type = scanner.nextLine();
 
             System.out.println("Enter payment amount: ");
             double amount = scanner.nextDouble();
 
             scanner.nextLine();
 
-            System.out.println("Enter Pay Date: ");
+            System.out.println("Enter Pay Date (yyyy-mm-dd): ");
             final String date = scanner.nextLine();
 
             //SQL query to insert payment details into the database
@@ -1162,7 +1169,7 @@ public class ProductionService {
 
         System.out.println("Here is a list of authors and editors: \n");
         //SQL query to list the authors and editors present as staff of the WolfPubDb Publishing house
-        resultSetService.runQueryAndPrintOutput(connection, "SELECT name FROM staff where title = 'Author' OR title = 'Editor';");
+        resultSetService.runQueryAndPrintOutput(connection, "SELECT sid, name FROM staff where title = 'Author' OR title = 'Editor';");
 
         System.out.println("Enter the staff ID of the author/editor whose payment claim details you would like to see: ");
         final int staffID = scanner.nextInt();
