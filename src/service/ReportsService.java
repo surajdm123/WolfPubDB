@@ -117,7 +117,7 @@ public class ReportsService {
         try {
 
             /* query to get total revenue of the publishing house */
-            final String sqlQuery = "SELECT SUM(price) as revenue FROM orders;";
+            final String sqlQuery = "SELECT SUM(amount) as revenue FROM transactions;";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
 
             ResultSet resultSet = statement.executeQuery();
@@ -168,7 +168,7 @@ public class ReportsService {
     private boolean getRevenuePerCity(Connection connection) {
         try {
             /* query to get total revenue per city */
-            final String sqlQuery = "SELECT d.city, SUM(o.price) as revenue from orders o, distributor d where  o.distributorId = d.distributorId group by city;";
+            final String sqlQuery = "SELECT d.city, SUM(o.amount) as revenue from transactions o, distributor d where  o.distributorId = d.distributorId group by city;";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
 
             ResultSet resultSet = statement.executeQuery();
@@ -185,7 +185,7 @@ public class ReportsService {
     private boolean getRevenuePerDistributor(Connection connection) {
         try {
             /* query to get total revenue per distributor */
-            final String sqlQuery = "SELECT distributorId, distributor.name, SUM(price) as price from orders NATURAL JOIN distributor GROUP BY  distributorId;";
+            final String sqlQuery = "SELECT distributorId, distributor.name, SUM(amount) as price from transactions NATURAL JOIN distributor GROUP BY  distributorId;";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
 
             ResultSet resultSet = statement.executeQuery();
@@ -202,7 +202,7 @@ public class ReportsService {
     private boolean getRevenuePerLocation(Connection connection) {
         try {
             /* query to get total revenue per location */
-            final String sqlQuery = "SELECT streetAddress, SUM(price) as revenue from orders o, distributor  d where o.distributorId = d.distributorId group by streetAddress;";
+            final String sqlQuery = "SELECT streetAddress, SUM(amount) as revenue from transactions o, distributor  d where o.distributorId = d.distributorId group by streetAddress;";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
 
             ResultSet resultSet = statement.executeQuery();
